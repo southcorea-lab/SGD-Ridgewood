@@ -160,7 +160,7 @@ nav .bd{position:absolute;top:4px;left:calc(50% + 6px);background:var(--bad);col
 <script src="config.js"></script>
 <script>
 "use strict";
-const APP_VERSION="0.10.0";
+const APP_VERSION="0.11.0";
 /* ---------- 문구 (English default / 한국어) ---------- */
 const T={
 en:{ homeT:"Today's orders",sumDraft:"Drafts",sumWait:"Awaiting delivery",sumRuns:"Store runs (30d)",vendors:"Vendors",lastOn:"Last order {d}",
@@ -191,6 +191,7 @@ title:"Order Guard",sub:"Never miss an order",tabOrder:"Orders",tabRecv:"Receive
  item:"Item",itemPh:"e.g. Scallion",why:"Reason",amt:"Amount ($, optional)",saveRun:"Save entry",runs:"Emergency purchases",del:"Delete",recorded:"Recorded",needItem:"Enter an item",
  r_forgot:"Forgot to order it",r_notdelivered:"Not delivered",r_short:"Quantity was not enough",r_busy:"Sales spiked",r_other:"Other",
  storeName:"Store name (Korean / main)",storeEn:"Store name (English, used in English messages)",addVendor:"+ Add vendor",vendorName:"Vendor name (main)",vendorEn:"Vendor name (English)",
+ gInvT:"Invitation required",gInvLead:"Open the invitation link you were sent, or type your invitation code below.",invCode:"Invitation code",invGo:"Continue",invBad:"Enter the invitation code",setupT:"Setting up your data",setupWait:"Connecting to your backup…",setupErr:"Could not reach the backup",retry:"Try again",conflT:"A saved backup already exists",conflLead:"Your Google backup already has data. Which should this phone use?",useG:"Use the saved backup",useThis:"Replace the backup with this phone's data",gMand:"Backup is always on and cannot be turned off.",gCode:"Invitation code ending in {c}",gChg:"Change code",
  gT:"Google backup",gHelp:"Saves a copy of your data to a Google Drive folder you own. Set it up once with the steps in the README.",gUrl:"Web app URL",gTok:"Secret word",gSave:"Turn on",gNow:"Back up now",gRest:"Restore from Google",gOff:"Turn off",gAs:"Backing up to your Google Drive",gLast:"Last backup {d}",gWait:"Waiting for the first backup",gNone:"No backup found yet",gDone:"Restored from Google",gBad:"Enter both the URL and the secret word",gErr:"Backup failed",sGOk:"Backed up to Google at {h}",sGErr:"Google backup failed — will retry",sGWait:"Google backup is on",
  gateT:"Sign in",gateLead:"This app is for invited users only. Enter your email and we will send you a code.",gateNo:"This email is not on the invited list. Please ask the administrator to add you.",
  shareT:"Share this app",shareBtn:"Send link",shareCopied:"Link copied",shareHow:"To get the app icon on a phone: open the link in Safari, tap the Share button (square with an arrow), choose Add to Home Screen, then Add.",shareInstall:"Add this app to your Home Screen",shareInstallHow:"Tap the Share button in Safari, then choose Add to Home Screen.",hideIt:"Got it",
@@ -234,6 +235,7 @@ title:"주문 가드",sub:"발주 누락 방지",tabOrder:"발주",tabRecv:"입�
  item:"품목",itemPh:"예: 대파",why:"이유",amt:"금액 ($, 모르면 비워두세요)",saveRun:"기록 저장",runs:"긴급 구매 기록",del:"삭제",recorded:"기록했습니다",needItem:"품목을 입력하세요",
  r_forgot:"주문에서 빠뜨림",r_notdelivered:"입고 때 안 왔음",r_short:"수량이 모자람",r_busy:"갑자기 많이 팔림",r_other:"기타",
  storeName:"매장 이름 (한글/기본)",storeEn:"매장 이름 (영문, 영어 문자에 사용)",addVendor:"+ 거래처 추가",vendorName:"거래처 이름 (기본)",vendorEn:"거래처 이름 (영문)",
+ gInvT:"초대 코드가 필요합니다",gInvLead:"전달받은 초대 링크를 열거나, 아래에 초대 코드를 입력하세요.",invCode:"초대 코드",invGo:"계속",invBad:"초대 코드를 입력하세요",setupT:"데이터 준비 중",setupWait:"백업에 연결하는 중입니다…",setupErr:"백업에 연결하지 못했습니다",retry:"다시 시도",conflT:"저장된 백업이 이미 있습니다",conflLead:"구글 백업에 이미 데이터가 있습니다. 이 폰은 어느 쪽을 쓸까요?",useG:"저장된 백업 사용",useThis:"이 폰의 데이터로 백업 덮어쓰기",gMand:"백업은 항상 켜져 있으며 끌 수 없습니다.",gCode:"초대 코드 끝자리 {c}",gChg:"코드 변경",
  gT:"구글 백업",gHelp:"데이터 사본을 내 구글 드라이브 폴더에 저장합니다. README의 순서대로 한 번만 설정하면 됩니다.",gUrl:"웹 앱 주소(URL)",gTok:"비밀 단어",gSave:"켜기",gNow:"지금 백업",gRest:"구글에서 복원",gOff:"끄기",gAs:"내 구글 드라이브에 백업 중",gLast:"마지막 백업 {d}",gWait:"첫 백업 대기 중",gNone:"아직 백업이 없습니다",gDone:"구글에서 복원했습니다",gBad:"주소와 비밀 단어를 모두 입력하세요",gErr:"백업 실패",sGOk:"구글에 백업됨 {h}",sGErr:"구글 백업 실패 — 다시 시도합니다",sGWait:"구글 백업 켜짐",
  gateT:"로그인",gateLead:"초대받은 사용자만 사용할 수 있습니다. 이메일을 입력하면 인증번호를 보내 드립니다.",gateNo:"초대 목록에 없는 이메일입니다. 관리자에게 등록을 요청하세요.",
  shareT:"앱 공유하기",shareBtn:"링크 보내기",shareCopied:"링크를 복사했습니다",shareHow:"휴대폰에 앱 아이콘을 만들려면: 링크를 사파리로 열고, 공유 버튼(화살표가 있는 네모)을 눌러 '홈 화면에 추가'를 고른 다음 '추가'를 누르세요.",shareInstall:"이 앱을 홈 화면에 추가하세요",shareInstallHow:"사파리 아래의 공유 버튼을 누른 뒤 '홈 화면에 추가'를 고르세요.",hideIt:"확인",
@@ -254,35 +256,29 @@ const UNIT_EN={"박스":"box","포대":"bag","개":"ea","통":"jug","케이스":
 
 /* ---------- 초기 데이터: 파일럿 인보이스 9건에서 추출 (거래처명은 일반 명칭) ---------- */
 function seed(){
+  /* 공개용 가상 샘플 데이터입니다. 실제 거래처 정보는 이 파일에 넣지 않습니다. */
   const it=(id,name,en,unit,price)=>({id,name,en,unit:unit||"개",price:price||null});
-  const V1=[it("a1","순두부(벌크)","Soft tofu (bulk)","박스",23.5),it("a2","무","Korean radish","박스",23),it("a3","배추","Napa cabbage","박스",18),it("a4","대파","Scallion","박스",51),it("a5","콩나물","Bean sprouts","박스",9),
-    it("a6","쌀 40lb","Rice 40lb","포대",26),it("a7","찹쌀","Sweet rice","포대",44),it("a8","부침가루","Griddle coat mix","개",24),it("a9","간장 5gal","Soy sauce 5gal","통",38),it("a10","어묵","Fish cake","박스",49),
-    it("a11","냉동 오징어","Frozen squid","박스",139),it("a12","굴","Oyster meat","박스",110),it("a13","가래떡","Rice cake sticks","박스",20),it("a14","설탕","Sugar","포대",40),it("a15","계란 30dz","Eggs 30dz","박스",22),
-    it("a16","라면사리","Ramen noodles","박스",26),it("a17","당면","Vermicelli","박스",60),it("a18","튀김가루","Frying mix","개",24),it("a19","참기름 5gal","Sesame oil 5gal","통",129),it("a20","미림","Mirin","개",36),it("a21","새우튀김","Shrimp tempura","박스",60)];
-  const V2=[it("b1","조개","Clams","박스",48),it("b2","새우 10lb","Shrimp 10lb","박스",null),it("b3","오징어 10lb","Squid 10lb","박스",136)];
-  const V3=[it("c1","야채만두","Vegetable dumplings","케이스",190),it("c2","고기만두","Pork dumplings","케이스",200)];
-  const V4=[it("d1","델리용기 12oz","Deli container 12oz","박스",48.5),it("d2","스시용기","Sushi container","박스",59),it("d3","롤백 10x15","Roll bag 10x15","박스",16),it("d4","롤백 12x20","Roll bag 12x20","박스",16),
-    it("d5","본드롤(영수증용지)","Bond roll","박스",57),it("d6","감열지롤","Thermal roll","박스",57),it("d7","롤타월","Roll towel","박스",23),it("d8","화장지","Toilet tissue","박스",25)];
-  const V5=[it("e1","양념 페이스트","Seasoned paste","개",298),it("e2","LA 소스","LA sauce","개",63),it("e3","돼지 소스","Pork sauce","개",76)];
+  const mk=(p,n,unit,base)=>Array.from({length:n},(_,k)=>it(p+(k+1),"샘플 품목 "+(k+1),"Sample item "+(k+1),unit,base+k));
+  const V1=mk("a",21,"박스",10),V2=mk("b",3,"박스",20),V3=mk("c",2,"케이스",30),V4=mk("d",8,"박스",15),V5=mk("e",3,"개",25);
   const o=(id,v,date,lines)=>({id,vendorId:v,date,status:"received",lines,received:null,shorts:[]});
   const q=a=>a.map(x=>({itemId:x[0],qty:x[1]}));
   return {
-    lang:"en",store:"소공동순두부 리지우드",storeEn:"",drafts:{},
+    lang:"en",store:"샘플 식당",storeEn:"Sample Restaurant",drafts:{},
     vendors:[
-      {id:"v1",name:"채소·식품 도매",en:"Produce & grocery wholesale",phone:"",smsLang:"ko",items:V1},
-      {id:"v6",name:"고기 거래처",en:"Meat vendor",phone:"",smsLang:"ko",items:[]},
-      {id:"v2",name:"해산물",en:"Seafood",phone:"",smsLang:"ko",items:V2},
-      {id:"v3",name:"만두류",en:"Dumplings",phone:"",smsLang:"ko",items:V3},
-      {id:"v5",name:"본사 공급",en:"HQ supply",phone:"",smsLang:"ko",items:V5},
-      {id:"v4",name:"일회용품·포장재",en:"Disposables & packaging",phone:"",smsLang:"ko",items:V4}
+      {id:"v1",name:"샘플 도매 A",en:"Sample wholesale A",phone:"",smsLang:"ko",items:V1,days:[],cutoff:"09:00"},
+      {id:"v6",name:"샘플 거래처 B",en:"Sample vendor B",phone:"",smsLang:"ko",items:[],days:[],cutoff:"09:00"},
+      {id:"v2",name:"샘플 거래처 C",en:"Sample vendor C",phone:"",smsLang:"ko",items:V2,days:[],cutoff:"09:00"},
+      {id:"v3",name:"샘플 거래처 D",en:"Sample vendor D",phone:"",smsLang:"ko",items:V3,days:[],cutoff:"09:00"},
+      {id:"v5",name:"샘플 거래처 E",en:"Sample vendor E",phone:"",smsLang:"ko",items:V5,days:[],cutoff:"09:00"},
+      {id:"v4",name:"샘플 거래처 F",en:"Sample vendor F",phone:"",smsLang:"ko",items:V4,days:[],cutoff:"09:00"}
     ],
     orders:[
-      o("h1","v1","2026-10-13",q([["a1",6],["a2",1],["a3",4],["a4",2],["a5",5],["a6",4],["a7",1],["a8",1],["a9",2],["a10",2],["a11",1],["a12",1],["a13",4],["a14",1],["a15",2]])),
-      o("h2","v1","2026-10-15",q([["a1",8],["a2",2],["a3",2],["a5",6],["a6",4],["a16",1],["a17",1],["a18",1],["a19",1],["a20",1],["a21",1],["a15",1]])),
+      o("h1","v1","2026-10-13",q([["a1",6],["a2",1],["a3",4],["a4",2],["a5",5],["a6",4],["a7",1],["a8",1],["a9",2],["a10",2]])),
+      o("h2","v1","2026-10-15",q([["a1",8],["a2",2],["a3",2],["a5",6],["a6",4],["a15",1],["a16",1],["a17",1],["a18",1],["a19",1],["a20",1],["a21",1]])),
       o("h3","v2","2026-11-12",q([["b1",2],["b2",2],["b3",1]])),
-      o("h4","v3","2026-11-13",q([["c1",0.6],["c2",0.4]])),
+      o("h4","v3","2026-11-13",q([["c1",1],["c2",1]])),
       o("h5","v5","2026-11-09",q([["e1",1],["e2",4],["e3",1]])),
-      o("h6","v4","2026-09-30",q([["d1",2],["d2",4],["d3",1],["d4",2],["d5",1],["d6",2],["d7",2],["d8",2]]))
+      o("h6","v4","2026-09-30",q([["d1",2],["d2",4],["d3",1],["d4",2],["d5",1]]))
     ],
     runs:[],v:1
   };
@@ -319,8 +315,9 @@ async function flush(){
   catch(e){setSync("sFail");dirty=true}
   saving=false;if(dirty)saveT=setTimeout(flush,1500);
 }
+let FRESH=false;
 async function init(){
-  S=load();render();
+  S=load();FRESH=!S;render();
   try{
     const c=window.claude&&await Promise.race([window.claude.use("db"),new Promise(r=>setTimeout(()=>r(null),10000))]);
     if(c){
@@ -335,6 +332,7 @@ async function init(){
   if(!S){S=seed();persist()}
   if(!ui.vid||!V(ui.vid))ui.vid=S.vendors[0].id;
   render();
+  gStart();
   await cloudBoot();
 }
 /* ---------- 도메인 로직 ---------- */
@@ -449,12 +447,21 @@ async function cloudRestore(){
   catch(e){cl.err=String(e.message||e)}
   render();
 }
-const g={url:"",tok:"",on:false,last:null,err:"",busy:false,t:null,dirty:false};
-try{g.url=localStorage.getItem("orderguard.g.url")||"";g.tok=localStorage.getItem("orderguard.g.tok")||"";g.on=localStorage.getItem("orderguard.g.on")==="1";const l=+localStorage.getItem("orderguard.g.last");if(l)g.last=l}catch(e){}
+const g={url:"",tok:"",on:false,last:null,err:"",busy:false,t:null,dirty:false,mandatory:false,phase:"ready",srv:null};
+try{
+  g.mandatory=/^https:\/\//.test(CFG.GOOGLE_URL||"");
+  g.url=g.mandatory?CFG.GOOGLE_URL:(localStorage.getItem("orderguard.g.url")||"");
+  g.tok=localStorage.getItem("orderguard.g.tok")||"";
+  const hk=new URLSearchParams((location.hash||"").replace(/^#/,"")).get("k");
+  if(g.mandatory&&hk){g.tok=hk.trim();localStorage.setItem("orderguard.g.tok",g.tok)}
+  g.on=g.mandatory?!!g.tok:localStorage.getItem("orderguard.g.on")==="1";
+  const l=+localStorage.getItem("orderguard.g.last");if(l)g.last=l;
+  if(g.mandatory&&g.tok&&localStorage.getItem("orderguard.g.init")!==g.tok)g.phase="init";
+}catch(e){}
 function gSave(){try{localStorage.setItem("orderguard.g.url",g.url);localStorage.setItem("orderguard.g.tok",g.tok);localStorage.setItem("orderguard.g.on",g.on?"1":"0");if(g.last)localStorage.setItem("orderguard.g.last",String(g.last))}catch(e){}}
 function gSoon(){if(!g.on)return;g.dirty=true;clearTimeout(g.t);g.t=setTimeout(gPush,5000)}
 async function gPush(){
-  if(!g.on||g.busy)return;g.busy=true;g.dirty=false;
+  if(!g.on||g.busy||g.phase!=="ready")return;g.busy=true;g.dirty=false;
   try{
     const r=await fetch(g.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({token:g.tok,data:S})});
     const j=await r.json();if(!j.ok)throw new Error(j.error||"error");
@@ -471,7 +478,36 @@ async function gRestore(){
   }catch(e){g.err=String(e.message||e);toast(t("gErr"))}
   render();
 }
+function gAdopt(data){S=migrate(data);try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}if(!ui.vid||!V(ui.vid))ui.vid=S.vendors[0]&&S.vendors[0].id}
+function gDone(){try{localStorage.setItem("orderguard.g.init",g.tok)}catch(e){}g.phase="ready";g.err=""}
+async function gStart(){
+  if(!g.mandatory||!g.tok||g.phase==="ready")return;
+  g.phase="init";g.err="";render();
+  try{
+    const r=await fetch(g.url+"?token="+encodeURIComponent(g.tok));
+    const j=await r.json();if(!j.ok)throw new Error(j.error==="auth"?"auth":(j.error||"error"));
+    if(j.data===null||j.data===undefined){gDone();gPush()}
+    else if(FRESH){gAdopt(j.data);gDone();g.last=Date.now();gSave()}
+    else{g.srv=j.data;g.phase="conflict"}
+  }catch(e){g.err=String(e.message||e);g.phase="initerr"}
+  render();
+}
+function gateGoogle(){
+  if(!g.mandatory)return"";
+  const wrap=x=>'<div style="padding:36px 4px 0">'+x+'</div>';
+  if(!g.tok)return wrap('<div class="h1">'+t("gInvT")+'</div><div class="sub" style="margin:6px 0 16px">'+t("gInvLead")+'</div><div class="card"><label style="display:block;margin-bottom:6px">'+t("invCode")+'</label><input type="text" style="width:100%;height:44px;font-size:16px;padding:0 12px;border:1px solid var(--line);border-radius:10px" autocapitalize="off" autocomplete="off" data-act="gcode" value=""><div style="margin-top:10px"><button class="btn" style="width:100%" data-act="gcodego">'+t("invGo")+'</button></div></div>');
+  if(g.phase==="init")return wrap('<div class="h1">'+t("setupT")+'</div><div class="sub" style="margin:6px 0">'+t("setupWait")+'</div>');
+  if(g.phase==="initerr")return wrap('<div class="h1">'+t("setupT")+'</div><div class="card"><b>'+t("setupErr")+'</b><div class="sub" style="color:var(--bad)">'+esc(g.err)+'</div><div class="row wrap" style="margin-top:10px"><button class="btn sm" data-act="gretry">'+t("retry")+'</button><button class="btn sec sm" data-act="gchg">'+t("gChg")+'</button></div></div>');
+  if(g.phase==="conflict")return wrap('<div class="h1">'+t("conflT")+'</div><div class="sub" style="margin:6px 0 14px">'+t("conflLead")+'</div><div class="card"><button class="btn" style="width:100%" data-act="guseg">'+t("useG")+'</button><button class="btn sec" style="width:100%;margin-top:10px" data-act="gusethis">'+t("useThis")+'</button></div>');
+  return"";
+}
 function gCard(){
+  if(g.mandatory){
+    return'<div class="card"><b>'+t("gT")+'</b><div class="sub">'+t("gMand")+'</div><div class="sub">'+t("gCode",{c:esc((g.tok||"").slice(-4))})+'</div><div class="sub">'+(g.err?esc(t("gErr")+" — "+g.err):g.last?t("gLast",{d:new Date(g.last).toLocaleString()}):t("gWait"))+'</div><div class="row wrap" style="margin-top:8px"><button class="btn sm" data-act="gnow">'+t("gNow")+'</button><button class="btn sec sm" data-act="grest">'+t("gRest")+'</button><button class="btn sec sm" data-act="gchg">'+t("gChg")+'</button></div></div>';
+  }
+  return gCardOpt();
+}
+function gCardOpt(){
   let h='<div class="card"><b>'+t("gT")+'</b>';
   if(!g.on){
     return h+'<div class="sub">'+t("gHelp")+'</div><label>'+t("gUrl")+'</label><input type="text" inputmode="url" autocapitalize="off" data-act="gurl" value="'+esc(g.url)+'"><label>'+t("gTok")+'</label><input type="text" autocapitalize="off" data-act="gtok" value="'+esc(g.tok)+'"><div style="margin-top:8px"><button class="btn sm" data-act="gon">'+t("gSave")+'</button></div></div>';
@@ -512,7 +548,7 @@ function cloudCard(){
   return h+'</div>';
 }
 window.addEventListener("online",cloudSoon);
-document.addEventListener("visibilitychange",()=>{if(document.hidden&&cl.st==="in"&&cl.dirty)cloudPush()});
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&g.on&&g.dirty)gPush();if(document.hidden&&cl.st==="in"&&cl.dirty)cloudPush()});
 
 /* ---------- 화면 ---------- */
 const IC={
@@ -706,7 +742,9 @@ function render(){
   const tabs=[["order",IC.home,"tabOrder",dn],["recv",IC.box,"tabRecv",pend],["inv",IC.doc,"tabInv",0,1],["price",IC.tag,"tabPrice",0,1],["log",IC.chart,"tabLog",0],["set",IC.gear,"tabSet",0]];
   $("#nav").innerHTML=tabs.map(x=>'<button class="'+(ui.tab===x[0]?"on":"")+'" data-act="tab" data-id="'+x[0]+'">'+x[1]+(x[3]?'<span class="bd">'+x[3]+'</span>':'')+(x[4]?'<span class="soon">'+t("soonTag")+'</span>':'')+t(x[2])+'</button>').join("");
   if(!S){$("#app").innerHTML='<div class="empty">'+t("loading")+'</div>';return}
-  document.body.classList.toggle("gate",cloudOn&&cl.st!=="in");
+  const gg=gateGoogle();
+  document.body.classList.toggle("gate",!!gg||(cloudOn&&cl.st!=="in"));
+  if(gg){$("#app").innerHTML=gg;$("#ctaw").innerHTML="";document.body.classList.remove("cta");return}
   if(cloudOn&&cl.st!=="in"){$("#app").innerHTML=gateView();$("#ctaw").innerHTML="";document.body.classList.remove("cta");return}
   if(!ui.vid||!V(ui.vid))ui.vid=S.vendors[0]&&S.vendors[0].id;
   let html,cta="";
@@ -721,7 +759,7 @@ function render(){
   if(keep){const e=document.querySelector('[data-act="'+keep.a+'"][data-id="'+keep.i+'"]');if(e&&e.focus&&e.type!=="checkbox"){e.focus();try{e.setSelectionRange(keep.s,keep.s)}catch(_){}}}
 }
 /* ---------- 이벤트 ---------- */
-const TYPED=["srch","cemail","ccode","qty","got","store","storeEn","vname","vnameEn","vphone","iname","ien","iunit","vsms","langsel","vcut","lead","gurl","gtok"];
+const TYPED=["srch","cemail","ccode","qty","got","store","storeEn","vname","vnameEn","vphone","iname","ien","iunit","vsms","langsel","vcut","lead","gurl","gtok","gcode"];
 document.addEventListener("click",ev=>{
   const el=ev.target.closest("[data-act]");if(!el||!S)return;
   const a=el.dataset.act,id=el.dataset.id;
@@ -747,6 +785,11 @@ document.addEventListener("click",ev=>{
       if(navigator.share){navigator.share({title:t("title"),text:t("title"),url:u}).catch(()=>{})}
       else{try{navigator.clipboard.writeText(u).then(()=>toast(t("shareCopied")))}catch(e){prompt(u)}}
       return}
+    case"gcodego":{const c=(g.codeTmp||"").trim();if(!c){toast(t("invBad"));return}g.tok=c;try{localStorage.setItem("orderguard.g.tok",c)}catch(e){}g.on=true;g.phase="init";g.codeTmp="";gStart();return}
+    case"gretry":gStart();return;
+    case"gchg":if(!armTwice(el))return;g.tok="";g.on=false;g.phase="init";g.err="";try{localStorage.removeItem("orderguard.g.tok");localStorage.removeItem("orderguard.g.init")}catch(e){}break;
+    case"guseg":{gAdopt(g.srv);g.srv=null;gDone();g.last=Date.now();gSave();break}
+    case"gusethis":{g.srv=null;gDone();gPush();break}
     case"gon":{if(!/^https:\/\//.test(g.url)||!g.tok){toast(t("gBad"));return}g.on=true;gSave();gPush();break}
     case"gnow":gPush();toast(t("gNow"));return;
     case"grest":if(!armTwice(el))return;gRestore();return;
@@ -800,6 +843,7 @@ document.addEventListener("input",ev=>{
   else if(a==="ccode"){cl.code=el.value}
   else if(a==="langsel"){S.lang=el.value;persist();render()}
   else if(a==="vsms"){v.smsLang=el.value;persist()}
+  else if(a==="gcode"){g.codeTmp=el.value}
   else if(a==="gurl"){g.url=el.value.trim()}
   else if(a==="gtok"){g.tok=el.value.trim()}
   else if(a==="vcut"){v.cutoff=el.value||"09:00";persist()}
