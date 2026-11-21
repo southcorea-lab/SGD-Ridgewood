@@ -7,3 +7,4 @@
 // SUPABASE_*  : 나중에 사용할 서버 로그인/백업 설정. 비워두면 사용하지 않습니다.
 //              절대로 "service_role" 키를 넣지 마세요.
 window.OG_CONFIG = { GOOGLE_URL: "https://script.google.com/macros/s/AKfycbwqpLPzQZKBQ4ZUZfdhCMUTdAlYqa1e-zB3HqWtTKAoWjvu83JwNvaZ1tMFEsE6s1St/exec", SUPABASE_URL: "", SUPABASE_ANON_KEY: "" };
+ 
