@@ -160,7 +160,7 @@ nav .bd{position:absolute;top:4px;left:calc(50% + 6px);background:var(--bad);col
 <script src="config.js"></script>
 <script>
 "use strict";
-const APP_VERSION="0.11.0";
+const APP_VERSION="0.12.0";
 /* ---------- 문구 (English default / 한국어) ---------- */
 const T={
 en:{ homeT:"Today's orders",sumDraft:"Drafts",sumWait:"Awaiting delivery",sumRuns:"Store runs (30d)",vendors:"Vendors",lastOn:"Last order {d}",
@@ -191,6 +191,7 @@ title:"Order Guard",sub:"Never miss an order",tabOrder:"Orders",tabRecv:"Receive
  item:"Item",itemPh:"e.g. Scallion",why:"Reason",amt:"Amount ($, optional)",saveRun:"Save entry",runs:"Emergency purchases",del:"Delete",recorded:"Recorded",needItem:"Enter an item",
  r_forgot:"Forgot to order it",r_notdelivered:"Not delivered",r_short:"Quantity was not enough",r_busy:"Sales spiked",r_other:"Other",
  storeName:"Store name (Korean / main)",storeEn:"Store name (English, used in English messages)",addVendor:"+ Add vendor",vendorName:"Vendor name (main)",vendorEn:"Vendor name (English)",
+ ivAdd:"Add from invoice photo",ivHint:"Take a photo of a delivery invoice. The app reads the vendor, items and quantities so you do not have to type them.",ivNote:"You review everything before it is saved. Handwritten lines can be wrong, so check the highlighted ones.",ivReading:"Reading the invoice… this can take up to a minute.",ivVendor:"Vendor",ivDate:"Date",ivNew:"New vendor will be created",ivMatch:"Existing vendor: {v}",ivItems:"Items",ivName:"Item",ivQty:"Qty",ivUnit:"Unit",ivPrice:"Price",ivAmt:"Amount",ivWMath:"Qty × price does not match the amount",ivWLow:"Hard to read, please check",ivWQty:"Quantity missing",ivWTotal:"Items add up to {a}, but the invoice total is {b}",ivCheck:"{n} line(s) need checking",ivSave:"Add to app",ivDiscard:"Discard",ivDone:"Added {n} item(s) to {v}",ivOpen:"Open vendor",ivAnother:"Add another invoice",ivRemove:"Remove",ivAddLine:"Add a line",ivEmpty:"No items were found in this photo.",ivRetry:"Try again",ivE_nokey:"Invoice reading is not turned on yet (the API key is missing).",ivE_limit:"Today's limit for invoice reading was reached. Try again tomorrow.",ivE_auth:"The invitation code is not valid.",ivE_unreadable:"Could not read this photo. Try a clearer, flatter photo.",ivE_toolarge:"The photo is too large.",ivE_net:"Could not connect. Check your internet and try again.",ivE_gen:"Something went wrong: {e}",ivNoLink:"Invoice reading needs the backup connection. Open the app with your invitation link first.",
  gInvT:"Invitation required",gInvLead:"Open the invitation link you were sent, or type your invitation code below.",invCode:"Invitation code",invGo:"Continue",invBad:"Enter the invitation code",setupT:"Setting up your data",setupWait:"Connecting to your backup…",setupErr:"Could not reach the backup",retry:"Try again",conflT:"A saved backup already exists",conflLead:"Your Google backup already has data. Which should this phone use?",useG:"Use the saved backup",useThis:"Replace the backup with this phone's data",gMand:"Backup is always on and cannot be turned off.",gCode:"Invitation code ending in {c}",gChg:"Change code",
  gT:"Google backup",gHelp:"Saves a copy of your data to a Google Drive folder you own. Set it up once with the steps in the README.",gUrl:"Web app URL",gTok:"Secret word",gSave:"Turn on",gNow:"Back up now",gRest:"Restore from Google",gOff:"Turn off",gAs:"Backing up to your Google Drive",gLast:"Last backup {d}",gWait:"Waiting for the first backup",gNone:"No backup found yet",gDone:"Restored from Google",gBad:"Enter both the URL and the secret word",gErr:"Backup failed",sGOk:"Backed up to Google at {h}",sGErr:"Google backup failed — will retry",sGWait:"Google backup is on",
  gateT:"Sign in",gateLead:"This app is for invited users only. Enter your email and we will send you a code.",gateNo:"This email is not on the invited list. Please ask the administrator to add you.",
@@ -235,6 +236,7 @@ title:"주문 가드",sub:"발주 누락 방지",tabOrder:"발주",tabRecv:"입�
  item:"품목",itemPh:"예: 대파",why:"이유",amt:"금액 ($, 모르면 비워두세요)",saveRun:"기록 저장",runs:"긴급 구매 기록",del:"삭제",recorded:"기록했습니다",needItem:"품목을 입력하세요",
  r_forgot:"주문에서 빠뜨림",r_notdelivered:"입고 때 안 왔음",r_short:"수량이 모자람",r_busy:"갑자기 많이 팔림",r_other:"기타",
  storeName:"매장 이름 (한글/기본)",storeEn:"매장 이름 (영문, 영어 문자에 사용)",addVendor:"+ 거래처 추가",vendorName:"거래처 이름 (기본)",vendorEn:"거래처 이름 (영문)",
+ ivAdd:"인보이스 사진으로 추가",ivHint:"납품 인보이스를 사진으로 찍으면 거래처, 품목, 수량을 앱이 읽어 줍니다. 직접 입력하지 않아도 됩니다.",ivNote:"저장하기 전에 내용을 확인하고 고칠 수 있습니다. 손글씨 줄은 틀릴 수 있으니 표시된 줄을 확인하세요.",ivReading:"인보이스를 읽는 중입니다… 최대 1분쯤 걸릴 수 있습니다.",ivVendor:"거래처",ivDate:"날짜",ivNew:"새 거래처로 등록됩니다",ivMatch:"기존 거래처: {v}",ivItems:"품목",ivName:"품목",ivQty:"수량",ivUnit:"단위",ivPrice:"단가",ivAmt:"금액",ivWMath:"수량 × 단가가 금액과 다릅니다",ivWLow:"읽기 어려움, 확인하세요",ivWQty:"수량이 없습니다",ivWTotal:"품목 합계는 {a}인데 인보이스 총액은 {b}입니다",ivCheck:"확인이 필요한 줄 {n}개",ivSave:"앱에 추가",ivDiscard:"버리기",ivDone:"{v}에 품목 {n}개를 추가했습니다",ivOpen:"거래처 열기",ivAnother:"인보이스 더 추가",ivRemove:"삭제",ivAddLine:"줄 추가",ivEmpty:"이 사진에서 품목을 찾지 못했습니다.",ivRetry:"다시 시도",ivE_nokey:"인보이스 읽기가 아직 켜지지 않았습니다(API 키 없음).",ivE_limit:"오늘 인보이스 읽기 한도에 도달했습니다. 내일 다시 시도하세요.",ivE_auth:"초대 코드가 올바르지 않습니다.",ivE_unreadable:"사진을 읽지 못했습니다. 더 선명하고 평평하게 다시 찍어 보세요.",ivE_toolarge:"사진이 너무 큽니다.",ivE_net:"연결하지 못했습니다. 인터넷을 확인하고 다시 시도하세요.",ivE_gen:"문제가 생겼습니다: {e}",ivNoLink:"인보이스 읽기는 백업 연결이 필요합니다. 초대 링크로 앱을 먼저 여세요.",
  gInvT:"초대 코드가 필요합니다",gInvLead:"전달받은 초대 링크를 열거나, 아래에 초대 코드를 입력하세요.",invCode:"초대 코드",invGo:"계속",invBad:"초대 코드를 입력하세요",setupT:"데이터 준비 중",setupWait:"백업에 연결하는 중입니다…",setupErr:"백업에 연결하지 못했습니다",retry:"다시 시도",conflT:"저장된 백업이 이미 있습니다",conflLead:"구글 백업에 이미 데이터가 있습니다. 이 폰은 어느 쪽을 쓸까요?",useG:"저장된 백업 사용",useThis:"이 폰의 데이터로 백업 덮어쓰기",gMand:"백업은 항상 켜져 있으며 끌 수 없습니다.",gCode:"초대 코드 끝자리 {c}",gChg:"코드 변경",
  gT:"구글 백업",gHelp:"데이터 사본을 내 구글 드라이브 폴더에 저장합니다. README의 순서대로 한 번만 설정하면 됩니다.",gUrl:"웹 앱 주소(URL)",gTok:"비밀 단어",gSave:"켜기",gNow:"지금 백업",gRest:"구글에서 복원",gOff:"끄기",gAs:"내 구글 드라이브에 백업 중",gLast:"마지막 백업 {d}",gWait:"첫 백업 대기 중",gNone:"아직 백업이 없습니다",gDone:"구글에서 복원했습니다",gBad:"주소와 비밀 단어를 모두 입력하세요",gErr:"백업 실패",sGOk:"구글에 백업됨 {h}",sGErr:"구글 백업 실패 — 다시 시도합니다",sGWait:"구글 백업 켜짐",
  gateT:"로그인",gateLead:"초대받은 사용자만 사용할 수 있습니다. 이메일을 입력하면 인증번호를 보내 드립니다.",gateNo:"초대 목록에 없는 이메일입니다. 관리자에게 등록을 요청하세요.",
@@ -605,6 +607,98 @@ function vStatus(v){
 }
 function vendorChips(){return'<div class="chips">'+S.vendors.map(v=>'<button class="chip '+(v.id===ui.vid?"on":"")+'" data-act="vid" data-id="'+v.id+'">'+esc(nameOf(v))+'</button>').join("")+'</div>'}
 function screenHead(title,sub,right){return'<div class="sh"><button class="iconbtn" data-act="home" aria-label="back">'+IC.back+'</button><div class="tt"><b>'+esc(title)+'</b>'+(sub?'<span class="cap">'+esc(sub)+'</span>':'')+'</div>'+(right||"")+'</div>'}
+/* ---------- 인보이스 사진 → 거래처·품목·수량 ---------- */
+const normName=x=>String(x||"").toLowerCase().replace(/[\s·.,&()\-_\/]/g,"");
+const sameName=(a,b)=>{a=normName(a);b=normName(b);return !!a&&!!b&&(a===b||(a.length>=2&&b.length>=2&&(a.includes(b)||b.includes(a))))};
+function findVendor(nm,en){return S.vendors.find(v=>sameName(v.name,nm)||(en&&sameName(v.en,en))||sameName(v.en,nm))||null}
+function findItem(v,nm,en){return v.items.find(i=>sameName(i.name,nm)||sameName(i.en,nm)||(en&&(sameName(i.name,en)||sameName(i.en,en))))||null}
+const unitKo=u=>{u=String(u||"").trim();const m={box:"박스",boxes:"박스",case:"케이스",cases:"케이스",bag:"포대",sack:"포대",ea:"개",each:"개",pc:"개",pcs:"개",bottle:"통",jug:"통",pail:"통"};return u?(m[u.toLowerCase()]||u):"개"};
+const nnum=x=>(x===null||x===undefined||x==="")?null:(isFinite(+x)?+x:null);
+function normInv(d){
+  d=d||{};const vn=d.vendor||{};
+  return{vendor:{name:String(vn.name||""),name_en:String(vn.name_en||""),phone:String(vn.phone||"").replace(/[^\d+]/g,"")},
+    date:/^\d{4}-\d{2}-\d{2}$/.test(d.date||"")?d.date:today(),
+    items:(Array.isArray(d.items)?d.items:[]).map(i=>({name:String(i.name||""),name_en:String(i.name_en||""),qty:nnum(i.qty),unit:String(i.unit||""),unit_price:nnum(i.unit_price),amount:nnum(i.amount),confidence:i.confidence==="low"?"low":"high"})).filter(i=>i.name),
+    total:nnum(d.total),notes:String(d.notes||"")};
+}
+function invWarns(it){
+  const w=[];
+  if(it.qty===null||it.qty<=0)w.push(t("ivWQty"));
+  if(it.qty!==null&&it.unit_price!==null&&it.amount!==null&&Math.abs(it.qty*it.unit_price-it.amount)>Math.max(0.05,it.amount*0.01))w.push(t("ivWMath"));
+  if(it.confidence==="low")w.push(t("ivWLow"));
+  return w;
+}
+async function prepImage(file){
+  const url=URL.createObjectURL(file);
+  try{
+    const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error("image"));i.src=url});
+    const sc=Math.min(1,2000/Math.max(img.width,img.height));
+    const c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.width*sc));c.height=Math.max(1,Math.round(img.height*sc));
+    c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+    return{b64:c.toDataURL("image/jpeg",0.85).split(",")[1],mime:"image/jpeg"};
+  }finally{URL.revokeObjectURL(url)}
+}
+function ivErr(m){m=String(m||"");const k=["nokey","limit","auth","unreadable","toolarge"].find(x=>m===x);if(k)return t("ivE_"+k);if(/fetch|network|load failed/i.test(m))return t("ivE_net");return t("ivE_gen",{e:m})}
+async function invExtract(file){
+  ui.inv={phase:"busy"};render();
+  try{
+    const img=await prepImage(file);
+    const r=await fetch(g.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({token:g.tok,action:"extract",image:img.b64,mime:img.mime})});
+    const j=await r.json();if(!j.ok)throw new Error(j.error||"error");
+    ui.inv={phase:"review",data:normInv(j.data)};
+  }catch(e){ui.inv={phase:"error",err:String(e.message||e)}}
+  render();
+}
+function invApply(){
+  const d=ui.inv.data,vn=d.vendor;let v=findVendor(vn.name,vn.name_en);
+  if(!v){v={id:"v"+uid(),name:vn.name||"?",en:vn.name_en||vn.name||"?",phone:vn.phone||"",smsLang:"ko",items:[],days:[],cutoff:"09:00"};S.vendors.push(v)}
+  else if(!v.phone&&vn.phone)v.phone=vn.phone;
+  const lines=[];
+  d.items.forEach(it=>{
+    if(it.qty===null||it.qty<=0)return;
+    let m=findItem(v,it.name,it.name_en);
+    if(!m){m={id:"x"+uid(),name:it.name,en:it.name_en||it.name,unit:unitKo(it.unit),price:it.unit_price};v.items.push(m)}
+    else if(it.unit_price!==null)m.price=it.unit_price;
+    lines.push({itemId:m.id,qty:it.qty});
+  });
+  S.orders.push({id:uid(),vendorId:v.id,date:d.date||today(),status:"received",lines,received:null,shorts:[],invoice:{total:d.total,notes:d.notes}});
+  persist();
+  ui.inv={phase:"done",n:lines.length,vid:v.id,vname:nameOf(v)};
+}
+function viewInv(){
+  const st=ui.inv||(ui.inv={phase:"idle"}),ready=!!(g.url&&g.tok&&g.phase==="ready");
+  let h='<div class="h1" style="margin-top:12px">'+t("invT")+'</div>';
+  const addBtn='<label class="btn" style="display:block;text-align:center;margin-top:12px"><input type="file" accept="image/*" data-act="invfile" style="display:none">'+t("ivAdd")+'</label>';
+  if(st.phase==="busy")return h+'<div class="card" style="text-align:center;padding:26px 16px"><b>'+t("ivReading")+'</b></div>';
+  if(st.phase==="error")return h+'<div class="card"><div style="color:var(--bad)"><b>'+esc(ivErr(st.err))+'</b></div><div class="row wrap" style="margin-top:10px"><button class="btn sm" data-act="ivagain">'+t("ivRetry")+'</button></div></div>';
+  if(st.phase==="done")return h+'<div class="card" style="text-align:center;padding:22px 16px"><b>'+t("ivDone",{n:st.n,v:esc(st.vname)})+'</b><div class="row wrap" style="margin-top:12px;justify-content:center"><button class="btn sm" data-act="ivopen" data-id="'+st.vid+'">'+t("ivOpen")+'</button><button class="btn sec sm" data-act="ivagain">'+t("ivAnother")+'</button></div></div>';
+  if(st.phase==="review"){
+    const d=st.data,m=findVendor(d.vendor.name,d.vendor.name_en),bad=d.items.filter(i=>invWarns(i).length).length;
+    const sum=d.items.reduce((a,i)=>a+(i.amount!==null?i.amount:(i.qty!==null&&i.unit_price!==null?i.qty*i.unit_price:0)),0);
+    h+='<div class="card"><label style="display:block;margin-bottom:4px">'+t("ivVendor")+'</label><input type="text" data-act="ivf" data-id="v.name" value="'+esc(d.vendor.name)+'" style="width:100%;height:44px;font-size:16px;padding:0 12px;border:1px solid var(--line);border-radius:10px">'+
+      '<div class="sub" style="margin:6px 0 10px">'+(m?t("ivMatch",{v:esc(nameOf(m))}):t("ivNew"))+'</div>'+
+      '<label style="display:block;margin-bottom:4px">'+t("ivDate")+'</label><input type="date" data-act="ivf" data-id="date" value="'+esc(d.date)+'" style="height:44px;font-size:16px;padding:0 12px;border:1px solid var(--line);border-radius:10px"></div>';
+    if(bad)h+='<div class="card" style="border-left:4px solid var(--bad)"><b>'+t("ivCheck",{n:bad})+'</b></div>';
+    if(d.total!==null&&Math.abs(sum-d.total)>Math.max(0.1,d.total*0.01))h+='<div class="card" style="border-left:4px solid var(--bad)"><b>'+t("ivWTotal",{a:"$"+sum.toFixed(2),b:"$"+d.total.toFixed(2)})+'</b></div>';
+    h+='<div class="sec">'+t("ivItems")+' · '+d.items.length+'</div>';
+    if(!d.items.length)h+='<div class="card"><div class="sub">'+t("ivEmpty")+'</div></div>';
+    d.items.forEach((i,k)=>{
+      const w=invWarns(i),ib='style="width:100%;height:40px;font-size:16px;padding:0 8px;border:1px solid var(--line);border-radius:8px"';
+      h+='<div class="card" style="'+(w.length?"border-left:4px solid var(--bad)":"")+'"><div class="row" style="gap:8px"><input type="text" data-act="ivf" data-id="'+k+'.name" value="'+esc(i.name)+'" '+ib+'><button class="btn sec sm" data-act="ivdel" data-id="'+k+'" aria-label="'+t("ivRemove")+'">✕</button></div>'+
+        '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-top:8px">'+
+        '<div><div class="cap">'+t("ivQty")+'</div><input type="number" inputmode="decimal" data-act="ivf" data-id="'+k+'.qty" value="'+(i.qty===null?"":i.qty)+'" '+ib+'></div>'+
+        '<div><div class="cap">'+t("ivUnit")+'</div><input type="text" data-act="ivf" data-id="'+k+'.unit" value="'+esc(i.unit)+'" '+ib+'></div>'+
+        '<div><div class="cap">'+t("ivPrice")+'</div><input type="number" inputmode="decimal" data-act="ivf" data-id="'+k+'.price" value="'+(i.unit_price===null?"":i.unit_price)+'" '+ib+'></div>'+
+        '<div><div class="cap">'+t("ivAmt")+'</div><input type="number" inputmode="decimal" data-act="ivf" data-id="'+k+'.amount" value="'+(i.amount===null?"":i.amount)+'" '+ib+'></div></div>'+
+        (w.length?'<div class="sub" style="color:var(--bad);margin-top:6px">'+w.map(esc).join(" · ")+'</div>':'')+'</div>';
+    });
+    h+='<div class="row wrap" style="margin:10px 0"><button class="btn sec sm" data-act="ivaddline">'+t("ivAddLine")+'</button></div>';
+    h+='<div class="row wrap"><button class="btn" data-act="ivsave"'+(d.items.length?'':' disabled')+'>'+t("ivSave")+'</button><button class="btn sec" data-act="ivcancel">'+t("ivDiscard")+'</button></div>';
+    return h;
+  }
+  h+='<div class="card"><div style="font-weight:700;margin-bottom:4px">'+t("invLead")+'</div><div class="sub">'+t("ivHint")+'</div><div class="sub" style="margin-top:6px">'+t("ivNote")+'</div>'+(ready?addBtn:'<div class="sub" style="margin-top:10px;color:var(--bad)">'+t("ivNoLink")+'</div>')+'</div>';
+  return h;
+}
 function viewSoon(k){
   const T0=k==="inv"?"invT":"priceT",L=k==="inv"?"invLead":"priceLead",F=t(k==="inv"?"invF":"priceF"),on=!!(S.interest&&S.interest[k]);
   return'<div class="h1" style="margin-top:12px">'+t(T0)+'</div><div class="card" style="text-align:center;padding:22px 16px"><span class="pill draft" style="font-size:12px">'+t("soon")+'</span><div style="font-weight:700;font-size:17px;margin:12px 0 4px">'+t(L)+'</div><div class="sub">'+t("soonNote")+'</div></div>'+
@@ -739,7 +833,7 @@ function render(){
   $("#updt").textContent=t("newVer");$("#updb").textContent=t("reload");
   const pend=S?S.orders.filter(o=>o.status==="sent").length:0;
   const dn=S?dueList().length:0;
-  const tabs=[["order",IC.home,"tabOrder",dn],["recv",IC.box,"tabRecv",pend],["inv",IC.doc,"tabInv",0,1],["price",IC.tag,"tabPrice",0,1],["log",IC.chart,"tabLog",0],["set",IC.gear,"tabSet",0]];
+  const tabs=[["order",IC.home,"tabOrder",dn],["recv",IC.box,"tabRecv",pend],["inv",IC.doc,"tabInv",0],["price",IC.tag,"tabPrice",0,1],["log",IC.chart,"tabLog",0],["set",IC.gear,"tabSet",0]];
   $("#nav").innerHTML=tabs.map(x=>'<button class="'+(ui.tab===x[0]?"on":"")+'" data-act="tab" data-id="'+x[0]+'">'+x[1]+(x[3]?'<span class="bd">'+x[3]+'</span>':'')+(x[4]?'<span class="soon">'+t("soonTag")+'</span>':'')+t(x[2])+'</button>').join("");
   if(!S){$("#app").innerHTML='<div class="empty">'+t("loading")+'</div>';return}
   const gg=gateGoogle();
@@ -753,13 +847,14 @@ function render(){
     else if(ui.sub==="vendor"){html=viewOrder();const n=draftLines(V(ui.vid)).length;if(n)cta='<div class="cta"><div class="in"><button class="btn" data-act="review"><span>'+t("itemsSel",{n})+'</span><span>'+t("reviewCta")+' →</span></button></div></div>'}
     else html=viewHome();
   }else if(ui.tab==="recv"){html=viewReceive();if(ui.rcv)cta='<div class="cta"><div class="in"><button class="btn" data-act="rcvsave"><span>'+t("saveRcv")+'</span><span>✓</span></button></div></div>'}
-  else if(ui.tab==="inv"||ui.tab==="price")html=viewSoon(ui.tab);
+  else if(ui.tab==="inv")html=viewInv();
+  else if(ui.tab==="price")html=viewSoon(ui.tab);
   else html=ui.tab==="log"?viewLog():viewSettings();
   $("#app").innerHTML=html;$("#ctaw").innerHTML=cta;document.body.classList.toggle("cta",!!cta);
   if(keep){const e=document.querySelector('[data-act="'+keep.a+'"][data-id="'+keep.i+'"]');if(e&&e.focus&&e.type!=="checkbox"){e.focus();try{e.setSelectionRange(keep.s,keep.s)}catch(_){}}}
 }
 /* ---------- 이벤트 ---------- */
-const TYPED=["srch","cemail","ccode","qty","got","store","storeEn","vname","vnameEn","vphone","iname","ien","iunit","vsms","langsel","vcut","lead","gurl","gtok","gcode"];
+const TYPED=["srch","cemail","ccode","qty","got","store","storeEn","vname","vnameEn","vphone","iname","ien","iunit","vsms","langsel","vcut","lead","gurl","gtok","gcode","ivf","invfile"];
 document.addEventListener("click",ev=>{
   const el=ev.target.closest("[data-act]");if(!el||!S)return;
   const a=el.dataset.act,id=el.dataset.id;
@@ -785,6 +880,12 @@ document.addEventListener("click",ev=>{
       if(navigator.share){navigator.share({title:t("title"),text:t("title"),url:u}).catch(()=>{})}
       else{try{navigator.clipboard.writeText(u).then(()=>toast(t("shareCopied")))}catch(e){prompt(u)}}
       return}
+    case"ivagain":ui.inv={phase:"idle"};break;
+    case"ivopen":ui.inv={phase:"idle"};ui.tab="order";ui.vid=id;ui.sub="vendor";ui.filter="all";ui.q="";window.scrollTo(0,0);break;
+    case"ivcancel":ui.inv={phase:"idle"};break;
+    case"ivdel":{if(ui.inv&&ui.inv.data){ui.inv.data.items.splice(+id,1)}break}
+    case"ivaddline":{if(ui.inv&&ui.inv.data){ui.inv.data.items.push({name:"",name_en:"",qty:null,unit:"",unit_price:null,amount:null,confidence:"high"})}break}
+    case"ivsave":{if(ui.inv&&ui.inv.data){ui.inv.data.items=ui.inv.data.items.filter(i=>i.name);invApply()}break}
     case"gcodego":{const c=(g.codeTmp||"").trim();if(!c){toast(t("invBad"));return}g.tok=c;try{localStorage.setItem("orderguard.g.tok",c)}catch(e){}g.on=true;g.phase="init";g.codeTmp="";gStart();return}
     case"gretry":gStart();return;
     case"gchg":if(!armTwice(el))return;g.tok="";g.on=false;g.phase="init";g.err="";try{localStorage.removeItem("orderguard.g.tok");localStorage.removeItem("orderguard.g.init")}catch(e){}break;
@@ -843,6 +944,8 @@ document.addEventListener("input",ev=>{
   else if(a==="ccode"){cl.code=el.value}
   else if(a==="langsel"){S.lang=el.value;persist();render()}
   else if(a==="vsms"){v.smsLang=el.value;persist()}
+  else if(a==="ivf"){const d=ui.inv&&ui.inv.data;if(d){const [k,f]=String(id).split(".");const num=x=>x===""?null:(isFinite(+x)?+x:null);
+    if(k==="v"){d.vendor.name=el.value}else if(k==="date"){d.date=el.value}else{const it=d.items[+k];if(it){if(f==="name")it.name=el.value;else if(f==="unit")it.unit=el.value;else if(f==="qty")it.qty=num(el.value);else if(f==="price")it.unit_price=num(el.value);else if(f==="amount")it.amount=num(el.value)}}}}
   else if(a==="gcode"){g.codeTmp=el.value}
   else if(a==="gurl"){g.url=el.value.trim()}
   else if(a==="gtok"){g.tok=el.value.trim()}
@@ -857,6 +960,7 @@ document.addEventListener("input",ev=>{
   else if(a==="ien"){itemOf(v,id).en=el.value;persist()}
   else if(a==="iunit"){itemOf(v,id).unit=el.value;persist()}
 });
+document.addEventListener("change",ev=>{const el=ev.target;if(el&&el.dataset&&el.dataset.act==="invfile"&&el.files&&el.files[0]){const f=el.files[0];try{el.value=""}catch(e){}invExtract(f)}});
 init();
 if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){window.addEventListener("load",()=>{const had=!!navigator.serviceWorker.controller;navigator.serviceWorker.addEventListener("controllerchange",()=>{if(had){const u=document.getElementById("upd");if(u)u.style.display="block"}});navigator.serviceWorker.register("sw.js").then(r=>{r.update();setInterval(()=>r.update(),3600000)}).catch(()=>{})})}
 </script>

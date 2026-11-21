@@ -63,3 +63,6 @@ Supabase 없이도 내 구글 드라이브에 자동 백업할 수 있습니다.
 - `config.js`의 `GOOGLE_URL`에 웹 앱 주소를 넣으면 백업이 **필수**가 되고, 초대 코드가 없으면 앱이 열리지 않습니다. 설정은 `GOOGLE-BACKUP.md`를 따르세요.
 - 공개 앱에는 가상의 **샘플 데이터**만 들어 있습니다. 실제 거래처 정보는 구글 드라이브 백업에서 불러옵니다.
 - 초대 링크: `https://(앱 주소)/#k=(초대 코드)`
+
+## 0.12.0
+Invoices tab: photo of a delivery invoice -> vendor, items, quantities pre-filled for review, then saved as a received order. Needs the backup connection (invitation link) and ANTHROPIC_API_KEY in Apps Script properties. See GOOGLE-BACKUP.md.

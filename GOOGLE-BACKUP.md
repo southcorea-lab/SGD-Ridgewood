@@ -33,3 +33,10 @@ GitHub 저장소의 `config.js`를 열어(연필 아이콘) `GOOGLE_URL: ""`의 
 - **한 코드는 한 사람(한 폰)만** 쓰세요. 같은 코드를 두 폰이 쓰면 마지막에 저장한 쪽이 덮어씁니다. 확인용 폰은 test 코드를 쓰세요.
 - `google-backup.gs`에 실제 코드를 적은 채로 GitHub에 올리지 마세요. 코드는 구글 스크립트 편집기 안에서만 적습니다.
 - 스크립트를 고친 뒤에는 새 버전으로 다시 배포해야 반영됩니다.
+
+## v3: Invoice photo reading (app 0.12.0)
+1. Get an API key at console.anthropic.com (add billing credit). Never paste it in chat or in the repo.
+2. Apps Script > Project settings (gear) > Script properties > Add `ANTHROPIC_API_KEY` = your key.
+3. Paste the new script, Deploy > Manage deployments > pencil > New version > Deploy. Authorize again when asked (the script now calls an external service).
+4. Limits: 40 invoice photos per day per invitation code (MAX_EXTRACT_PER_DAY). Photos are sent to the Anthropic API for reading. Real cost per photo is not measured yet: check usage at console.anthropic.com after the first tests.
+5. Optional (private script only): run `seedOwnerData()` once to load the owner's starting data into the owner's Drive folder. It keeps the old file as before-seed-<time>.json.
