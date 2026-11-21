@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#b4381f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="주문 가드">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+<title>주문 가드 — 발주 누락 방지 MVP</title>
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--ink:#1f1d1a;--mut:#6b675f;--line:#e4e1d8;--acc:#b4381f;--acc2:#8f2b17;--ok:#2f7d4f;--warn:#b7791f;--bad:#c0392b;--r:12px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;padding-bottom:84px}
+header{padding:calc(14px + env(safe-area-inset-top)) 16px 6px}
+h1{font-size:18px;margin:0}
+.sub{color:var(--mut);font-size:12.5px}
+main{padding:8px 12px 24px;max-width:640px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;margin:10px 0}
+.row{display:flex;gap:8px;align-items:center}
+.sp{justify-content:space-between}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:4px 0}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;white-space:nowrap;font-size:14px;cursor:pointer}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:10px 14px;font-weight:600}
+.btn.sec{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.sm{padding:6px 10px;font-size:13px}
+.btn:disabled{opacity:.4}
+.item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.item .nm{flex:1;min-width:0}
+.item .nm b{font-weight:600}
+.item .meta{font-size:12px;color:var(--mut)}
+.step{display:flex;align-items:center;gap:4px}
+.step button{width:40px;height:40px;border-radius:9px;border:1px solid var(--line);background:#fff;font-size:18px;line-height:1}
+.step input{font-size:16px;width:56px;text-align:center;height:40px;border:1px solid var(--line);border-radius:9px}
+.hint{background:#fff6e5;border:1px solid #f0d9a4;border-radius:10px;padding:10px;margin:8px 0;font-size:14px}
+.hint b{color:var(--warn)}
+.tag{display:inline-block;font-size:11.5px;border-radius:6px;padding:1px 6px;background:#eee;color:var(--mut)}
+.tag.bad{background:#fbe5e1;color:var(--bad)}.tag.ok{background:#e1f2e8;color:var(--ok)}.tag.warn{background:#fdefd2;color:var(--warn)}
+textarea,input[type=text],input[type=number],select{font:inherit;font-size:16px;width:100%;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff}
+textarea{min-height:150px;resize:vertical}
+label{font-size:12.5px;color:var(--mut);display:block;margin:8px 0 3px}
+nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;border:0;background:none;padding:10px 0 9px;font-size:12.5px;color:var(--mut)}
+nav button.on{color:var(--acc);font-weight:700}
+nav button i{display:block;font-style:normal;font-size:19px}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kpi div{background:#faf9f5;border:1px solid var(--line);border-radius:10px;padding:10px}
+.kpi b{font-size:22px;display:block}
+.kpi span{font-size:12px;color:var(--mut)}
+h2{font-size:15px;margin:14px 2px 4px}
+.empty{color:var(--mut);font-size:13.5px;padding:8px 2px}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:90px;background:#222;color:#fff;border-radius:999px;padding:8px 14px;font-size:13px;opacity:0;transition:.2s;pointer-events:none}
+#toast.on{opacity:.95}
+.sync{font-size:11.5px;color:var(--mut)}
+a.btn{display:inline-block;text-decoration:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>주문 가드 <span class="sub">발주 누락 방지 · 파일럿 MVP</span></h1>
+  <div class="sub" id="store"></div>
+  <div class="sync" id="sync"></div>
+</header>
+<main id="app"></main>
+<nav id="nav"></nav>
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ---------- 초기 데이터: 파일럿 인보이스 9건에서 추출 (거래처명은 일반 명칭으로 대체) ---------- */
+function seed(){
+  const it=(id,name,unit,price)=>({id,name,unit:unit||"개",price:price||null});
+  const V1=[it("a1","순두부(벌크)","박스",23.5),it("a2","무","박스",23),it("a3","배추","박스",18),it("a4","대파","박스",51),it("a5","콩나물","박스",9),
+    it("a6","쌀 40lb","포대",26),it("a7","찹쌀","포대",44),it("a8","부침가루","개",24),it("a9","간장 5gal","통",38),it("a10","어묵","박스",49),
+    it("a11","냉동 오징어","박스",139),it("a12","굴","박스",110),it("a13","가래떡","박스",20),it("a14","설탕","포대",40),it("a15","계란 30dz","박스",22),
+    it("a16","라면사리","박스",26),it("a17","당면","박스",60),it("a18","튀김가루","개",24),it("a19","참기름 5gal","통",129),it("a20","미림","개",36),it("a21","새우튀김","박스",60)];
+  const V2=[it("b1","조개","박스",48),it("b2","새우 10lb","박스",null),it("b3","오징어 10lb","박스",136)];
+  const V3=[it("c1","야채만두","케이스",190),it("c2","고기만두","케이스",200)];
+  const V4=[it("d1","델리용기 12oz","박스",48.5),it("d2","스시용기","박스",59),it("d3","롤백 10x15","박스",16),it("d4","롤백 12x20","박스",16),
+    it("d5","본드롤(영수증용지)","박스",57),it("d6","감열지롤","박스",57),it("d7","롤타월","박스",23),it("d8","화장지","박스",25)];
+  const V5=[it("e1","양념 페이스트","개",298),it("e2","LA 소스","개",63),it("e3","돼지 소스","개",76)];
+  const V6=[];
+  const o=(id,v,date,lines)=>({id,vendorId:v,date,status:"received",lines,received:null,shorts:[]});
+  const q=(a)=>a.map(x=>({itemId:x[0],qty:x[1]}));
+  return {
+    store:"소공동순두부 리지우드",
+    vendors:[
+      {id:"v1",name:"채소·식품 도매",phone:"",items:V1},
+      {id:"v6",name:"고기 거래처",phone:"",items:V6},
+      {id:"v2",name:"해산물",phone:"",items:V2},
+      {id:"v3",name:"만두류",phone:"",items:V3},
+      {id:"v5",name:"본사 공급",phone:"",items:V5},
+      {id:"v4",name:"일회용품·포장재",phone:"",items:V4}
+    ],
+    orders:[
+      o("h1","v1","2026-10-13",q([["a1",6],["a2",1],["a3",4],["a4",2],["a5",5],["a6",4],["a7",1],["a8",1],["a9",2],["a10",2],["a11",1],["a12",1],["a13",4],["a14",1],["a15",2]])),
+      o("h2","v1","2026-10-15",q([["a1",8],["a2",2],["a3",2],["a5",6],["a6",4],["a16",1],["a17",1],["a18",1],["a19",1],["a20",1],["a21",1],["a15",1]])),
+      o("h3","v2","2026-11-12",q([["b1",2],["b2",2],["b3",1]])),
+      o("h4","v3","2026-11-13",q([["c1",0.6],["c2",0.4]])),
+      o("h5","v5","2026-11-09",q([["e1",1],["e2",4],["e3",1]])),
+      o("h6","v4","2026-09-30",q([["d1",2],["d2",4],["d3",1],["d4",2],["d5",1],["d6",2],["d7",2],["d8",2]]))
+    ],
+    runs:[],
+    v:1
+  };
+}
+/* ---------- 상태·저장 ---------- */
+let S=null, ui={tab:"order",vid:null,draft:{},rcv:null,sv:null};
+let dbDoc=null, saveT=null, saving=false, dirty=false, mode="local";
+const LS="orderguard.v1";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const md=d=>{const p=d.split("-");return +p[1]+"/"+ +p[2]};
+const uid=()=>Math.random().toString(36).slice(2,9);
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),1800)}
+function setSync(t){$("#sync").textContent=t}
+function load(){
+  try{const r=localStorage.getItem(LS);if(r)return JSON.parse(r)}catch(e){}
+  return null;
+}
+function persist(){
+  dirty=true;
+  try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}
+  clearTimeout(saveT);saveT=setTimeout(flush,800);
+}
+async function flush(){
+  if(!dbDoc||saving||!dirty)return;
+  saving=true;dirty=false;
+  try{await dbDoc.set({json:JSON.stringify(S),at:Date.now()});setSync("저장됨 (클라우드)")}
+  catch(e){setSync("클라우드 저장 실패 — 이 기기에만 저장됨");dirty=true}
+  saving=false;
+  if(dirty)saveT=setTimeout(flush,1500);
+}
+async function init(){
+  S=load();
+  render();
+  try{
+    const c=window.claude&&await Promise.race([window.claude.use("db"),new Promise(r=>setTimeout(()=>r(null),10000))]);
+    if(c){
+      dbDoc=c.doc("app/state");
+      const snap=await dbDoc.get();
+      const ex=snap&&(typeof snap.exists==="function"?snap.exists():snap.exists);
+      const data=ex?(typeof snap.data==="function"?snap.data():snap.data):null;
+      if(data&&data.json){S=JSON.parse(data.json);mode="cloud";setSync("클라우드 연결됨")}
+      else{S=S||seed();mode="cloud";persist();setSync("클라우드 연결됨(새로 시작)")}
+    }else{setSync("이 기기에만 저장됩니다 (로그인하면 클라우드 저장)")}
+  }catch(e){setSync("이 기기에만 저장됩니다")}
+  if(!S){S=seed();persist()}
+  if(!ui.vid)ui.vid=S.vendors[0].id;
+  render();
+}
+/* ---------- 도메인 로직 ---------- */
+const V=id=>S.vendors.find(v=>v.id===id);
+const itemOf=(v,id)=>v.items.find(i=>i.id===id);
+const vOrders=vid=>S.orders.filter(o=>o.vendorId===vid).sort((a,b)=>b.date.localeCompare(a.date));
+const fmtQty=n=>(Math.round(n*100)/100).toString();
+function freq(vid){ // 최근 4건 중 품목별 등장 비율
+  const os=vOrders(vid).slice(0,4);const m={};
+  os.forEach(o=>o.lines.forEach(l=>{if(l.qty>0)m[l.itemId]=(m[l.itemId]||0)+1}));
+  return {n:os.length,m};
+}
+function lastQty(vid,itemId){
+  for(const o of vOrders(vid)){const l=o.lines.find(l=>l.itemId===itemId&&l.qty>0);if(l)return l.qty}
+  return 0;
+}
+function draftOf(vid){return ui.draft[vid]||(ui.draft[vid]={})}
+function buildSms(v,lines){
+  const rows=lines.map(l=>"- "+itemOf(v,l.itemId).name+" "+fmtQty(l.qty)+itemOf(v,l.itemId).unit);
+  return "["+S.store+"] "+md(today())+" 주문입니다.\n"+rows.join("\n")+"\n총 "+lines.length+"개 품목입니다. 확인 후 품목 수 회신 부탁드립니다. 감사합니다.";
+}
+/* ---------- 화면 ---------- */
+function vendorChips(){
+  return '<div class="chips">'+S.vendors.map(v=>'<button class="chip '+(v.id===ui.vid?"on":"")+'" data-act="vid" data-id="'+v.id+'">'+esc(v.name)+'</button>').join("")+'</div>';
+}
+function viewOrder(){
+  const v=V(ui.vid);const d=draftOf(v.id);const f=freq(v.id);
+  const lines=v.items.map(i=>({itemId:i.id,qty:+d[i.id]||0})).filter(l=>l.qty>0);
+  const missing=v.items.filter(i=>(f.m[i.id]||0)>=(f.n<=2?f.n:Math.ceil(f.n/2))&&f.n>0&&!(+d[i.id]>0));
+  let h=vendorChips();
+  h+='<div class="card"><div class="row sp"><b>'+esc(v.name)+' 주문서</b><div class="row"><button class="btn sec sm" data-act="loadlast">지난 주문 불러오기</button></div></div>';
+  if(!v.items.length)h+='<div class="empty">등록된 품목이 없습니다. 설정 탭에서 품목을 추가하세요.</div>';
+  if(missing.length&&lines.length)h+='<div class="hint"><b>빠진 것 아닌가요?</b> 최근 주문에 자주 있었는데 이번엔 없는 품목: '+missing.map(i=>'<a href="#" data-act="addmiss" data-id="'+i.id+'">'+esc(i.name)+'</a> ('+f.m[i.id]+'/'+f.n+'회)').join(", ")+'</div>';
+  h+=v.items.map(i=>{
+    const q=+d[i.id]||0,lq=lastQty(v.id,i.id),fr=f.m[i.id]||0;
+    return '<div class="item"><div class="nm"><b>'+esc(i.name)+'</b><div class="meta">'+(lq?'지난번 '+fmtQty(lq)+i.unit:'주문 이력 없음')+(fr&&f.n?' · '+fr+'/'+f.n+'회 주문':'')+(i.price?' · $'+i.price:'')+'</div></div>'+
+      '<div class="step"><button data-act="dec" data-id="'+i.id+'">−</button><input type="number" inputmode="decimal" min="0" step="any" value="'+(q||"")+'" placeholder="0" data-act="qty" data-id="'+i.id+'"><button data-act="inc" data-id="'+i.id+'">＋</button></div></div>';
+  }).join("");
+  h+='</div>';
+  if(lines.length){
+    const sms=buildSms(v,lines);
+    h+='<div class="card"><b>문자 미리보기 ('+lines.length+'개 품목)</b><textarea id="smsbox">'+esc(sms)+'</textarea>'+
+      '<div class="row" style="margin-top:8px;flex-wrap:wrap"><button class="btn" data-act="copy">복사</button>'+
+      '<a class="btn sec" href="sms:'+esc(v.phone)+'?&body='+encodeURIComponent(sms)+'">문자앱 열기</a>'+(v.phone?'':'<div class="sub" style="width:100%">전화번호가 없으면 문자앱에서 받는 사람을 직접 고르세요. (설정 탭에서 번호를 넣으면 자동 입력)</div>')+
+      '</div><div class="row" style="margin-top:8px"><button class="btn sec" data-act="sent">주문 보냈음 — 입고 대기로 저장</button></div></div>';
+  }
+  return h;
+}
+function viewReceive(){
+  const open=S.orders.filter(o=>o.status==="sent").sort((a,b)=>b.date.localeCompare(a.date));
+  if(ui.rcv){
+    const o=S.orders.find(x=>x.id===ui.rcv.id);const v=V(o.vendorId);
+    let h='<div class="card"><div class="row sp"><b>'+esc(v.name)+' · '+md(o.date)+' 주문 입고 확인</b><button class="btn sec sm" data-act="rcvback">뒤로</button></div><div class="sub">받은 수량을 확인하세요. 주문 수량과 다르면 부족으로 기록됩니다.</div>';
+    h+=o.lines.map(l=>{const i=itemOf(v,l.itemId);const g=ui.rcv.got[l.itemId];
+      return '<div class="item"><div class="nm"><b>'+esc(i.name)+'</b><div class="meta">주문 '+fmtQty(l.qty)+i.unit+'</div></div><div class="step"><input type="number" inputmode="decimal" min="0" step="any" value="'+g+'" data-act="got" data-id="'+l.itemId+'"></div>'+(g<l.qty?'<span class="tag bad">부족 '+fmtQty(l.qty-g)+'</span>':'<span class="tag ok">OK</span>')+'</div>'}).join("");
+    h+='<div class="row" style="margin-top:10px"><button class="btn" data-act="rcvsave">입고 확인 저장</button></div></div>';
+    return h;
+  }
+  let h='<h2>입고 대기 주문</h2>';
+  if(!open.length)h+='<div class="card empty">입고 대기 중인 주문이 없습니다. 발주 탭에서 주문을 "보냈음"으로 저장하면 여기에 나타납니다.</div>';
+  h+=open.map(o=>'<div class="card row sp"><div><b>'+esc(V(o.vendorId).name)+'</b><div class="meta sub">'+md(o.date)+' · '+o.lines.length+'개 품목</div></div><button class="btn sm" data-act="rcvopen" data-id="'+o.id+'">입고 확인</button></div>').join("");
+  const done=S.orders.filter(o=>o.status==="received"&&o.received).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
+  if(done.length){h+='<h2>최근 입고 결과</h2>'+done.map(o=>'<div class="card row sp"><div><b>'+esc(V(o.vendorId).name)+'</b> <span class="sub">'+md(o.date)+'</span></div>'+(o.shorts.length?'<span class="tag bad">부족 '+o.shorts.length+'건</span>':'<span class="tag ok">이상 없음</span>')+'</div>').join("")}
+  return h;
+}
+function stats(){
+  const cut=new Date();cut.setDate(cut.getDate()-30);const c=cut.toISOString().slice(0,10);
+  const os=S.orders.filter(o=>o.date>=c);
+  const rcv=S.orders.filter(o=>o.received&&o.date>=c);
+  const shorts=rcv.reduce((a,o)=>a+o.shorts.length,0);
+  const runs=S.runs.filter(r=>r.date>=c);
+  const amt=runs.reduce((a,r)=>a+(+r.amount||0),0);
+  const miss={};
+  rcv.forEach(o=>o.shorts.forEach(s=>{miss[s.name]=(miss[s.name]||0)+1}));
+  runs.forEach(r=>{miss[r.item]=(miss[r.item]||0)+1});
+  const top=Object.entries(miss).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  return {orders:os.length,shorts,runs:runs.length,amt,top};
+}
+function viewLog(){
+  const s=stats();const all=[...new Set(S.vendors.flatMap(v=>v.items.map(i=>i.name)))];
+  let h='<h2>최근 30일</h2><div class="kpi"><div><b>'+s.orders+'</b><span>주문 건수</span></div><div><b>'+s.shorts+'</b><span>입고 부족 품목</span></div><div><b>'+s.runs+'</b><span>급히 장 보러 간 횟수</span></div><div><b>$'+Math.round(s.amt)+'</b><span>긴급 구매 금액</span></div></div>';
+  h+='<div class="card"><b>자주 놓치는 품목</b>'+(s.top.length?s.top.map(t=>'<div class="item"><div class="nm">'+esc(t[0])+'</div><span class="tag bad">'+t[1]+'회</span></div>').join(""):'<div class="empty">아직 기록이 없습니다. 장 보러 간 일을 아래에 기록해 보세요.</div>')+'</div>';
+  h+='<div class="card"><b>급히 장 보러 갔나요? 기록하기</b><label>품목</label><input type="text" id="rn_item" list="rn_list" placeholder="예: 대파"><datalist id="rn_list">'+all.map(a=>'<option value="'+esc(a)+'">').join("")+'</datalist>'+
+   '<label>이유</label><select id="rn_why"><option>주문에서 빠뜨림</option><option>입고 때 안 왔음</option><option>수량이 모자람</option><option>갑자기 많이 팔림</option><option>기타</option></select>'+
+   '<label>금액 ($, 모르면 비워두세요)</label><input type="number" id="rn_amt" inputmode="decimal" placeholder="0"><div style="margin-top:10px"><button class="btn" data-act="runadd">기록 저장</button></div></div>';
+  const rs=[...S.runs].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,10);
+  if(rs.length)h+='<h2>긴급 구매 기록</h2><div class="card">'+rs.map(r=>'<div class="item"><div class="nm"><b>'+esc(r.item)+'</b><div class="meta">'+md(r.date)+' · '+esc(r.why)+(r.amount?' · $'+r.amount:'')+'</div></div><button class="btn sec sm" data-act="rundel" data-id="'+r.id+'">삭제</button></div>').join("")+'</div>';
+  return h;
+}
+function viewSettings(){
+  const v=V(ui.vid);
+  let h='<div class="card"><label>매장 이름 (문자 맨 앞에 들어갑니다)</label><input type="text" data-act="store" value="'+esc(S.store)+'"></div>'+vendorChips()+
+   '<div class="row" style="margin-bottom:6px"><button class="btn sec sm" data-act="addvendor">+ 거래처 추가</button></div>';
+  h+='<div class="card"><label>거래처 이름</label><input type="text" data-act="vname" value="'+esc(v.name)+'"><label>문자 받을 전화번호</label><input type="text" inputmode="tel" data-act="vphone" value="'+esc(v.phone)+'" placeholder="예: 2015551234">'+
+   '<h2>품목 ('+v.items.length+')</h2>'+v.items.map(i=>'<div class="item"><div class="nm"><input type="text" data-act="iname" data-id="'+i.id+'" value="'+esc(i.name)+'"></div><input type="text" style="width:64px" data-act="iunit" data-id="'+i.id+'" value="'+esc(i.unit)+'"><button class="btn sec sm" data-act="idel" data-id="'+i.id+'">삭제</button></div>').join("")+
+   '<div class="row" style="margin-top:10px"><input type="text" id="newitem" placeholder="새 품목 이름"><button class="btn sm" data-act="iadd">추가</button></div>'+
+   '<div style="margin-top:12px"><button class="btn sec sm" data-act="vdel">이 거래처 삭제</button></div></div>';
+  h+='<div class="card"><b>백업</b><div class="sub">데이터를 텍스트로 복사해 보관하거나 다른 곳에 붙여넣어 복원할 수 있습니다.</div><textarea id="bk" style="min-height:70px"></textarea><div class="row" style="margin-top:8px"><button class="btn sec sm" data-act="bkout">내보내기</button><button class="btn sec sm" data-act="bkin">가져오기</button><button class="btn sec sm" data-act="reset">처음 상태로</button></div></div>';
+  return h;
+}
+function render(){
+  const act=document.activeElement;const keep=act&&act.dataset&&act.dataset.id&&act.dataset.act?{a:act.dataset.act,i:act.dataset.id,s:act.selectionStart}:null;
+  $("#store").textContent=S?S.store:"";
+  const tabs=[["order","📝","발주"],["recv","📦","입고"],["log","📊","기록"],["set","⚙️","설정"]];
+  $("#nav").innerHTML=tabs.map(t=>'<button class="'+(ui.tab===t[0]?"on":"")+'" data-act="tab" data-id="'+t[0]+'"><i>'+t[1]+'</i>'+t[2]+'</button>').join("");
+  if(!S){$("#app").innerHTML='<div class="empty">불러오는 중…</div>';return}
+  if(!ui.vid||!V(ui.vid))ui.vid=S.vendors[0]&&S.vendors[0].id;
+  $("#app").innerHTML=ui.tab==="order"?viewOrder():ui.tab==="recv"?viewReceive():ui.tab==="log"?viewLog():viewSettings();
+  if(keep){const e=document.querySelector('[data-act="'+keep.a+'"][data-id="'+keep.i+'"]');if(e&&e.focus){e.focus();try{e.setSelectionRange(keep.s,keep.s)}catch(_){}}}
+}
+/* ---------- 이벤트 ---------- */
+document.addEventListener("click",ev=>{
+  const t=ev.target.closest("[data-act]");if(!t)return;
+  const a=t.dataset.act,id=t.dataset.id;
+  if(["qty","got","store","vname","vphone","iname","iunit"].includes(a))return;
+  if(t.tagName==="A"&&t.getAttribute("href")==="#")ev.preventDefault();
+  const v=S&&V(ui.vid);
+  switch(a){
+    case"tab":ui.tab=id;ui.rcv=null;break;
+    case"vid":ui.vid=id;break;
+    case"inc":{const d=draftOf(v.id);d[id]=(+d[id]||0)+1;break}
+    case"dec":{const d=draftOf(v.id);d[id]=Math.max(0,(+d[id]||0)-1);break}
+    case"addmiss":{const d=draftOf(v.id);d[id]=lastQty(v.id,id)||1;break}
+    case"loadlast":{const o=vOrders(v.id)[0];if(!o){toast("지난 주문이 없습니다");return}const d=ui.draft[v.id]={};o.lines.forEach(l=>d[l.itemId]=l.qty);toast(md(o.date)+" 주문을 불러왔습니다 — 이번 수량으로 고치세요");break}
+    case"copy":{const b=$("#smsbox");try{navigator.clipboard.writeText(b.value).then(()=>toast("복사했습니다"),()=>{b.select();toast("직접 선택해 복사하세요")})}catch(e){b.select();toast("직접 선택해 복사하세요")}return}
+    case"sent":{const d=draftOf(v.id);const lines=v.items.map(i=>({itemId:i.id,qty:+d[i.id]||0})).filter(l=>l.qty>0);
+      S.orders.push({id:uid(),vendorId:v.id,date:today(),status:"sent",lines,received:null,shorts:[]});ui.draft[v.id]={};persist();toast("입고 대기로 저장했습니다");break}
+    case"rcvopen":{const o=S.orders.find(x=>x.id===id);const got={};o.lines.forEach(l=>got[l.itemId]=l.qty);ui.rcv={id,got};break}
+    case"rcvback":ui.rcv=null;break;
+    case"rcvsave":{const o=S.orders.find(x=>x.id===ui.rcv.id);const vv=V(o.vendorId);
+      o.received=ui.rcv.got;o.status="received";o.shorts=o.lines.filter(l=>(+ui.rcv.got[l.itemId]||0)<l.qty).map(l=>({itemId:l.itemId,name:itemOf(vv,l.itemId).name,short:l.qty-(+ui.rcv.got[l.itemId]||0)}));
+      ui.rcv=null;persist();toast(o.shorts.length?"부족 "+o.shorts.length+"건 기록":"이상 없음으로 저장");break}
+    case"runadd":{const item=$("#rn_item").value.trim();if(!item){toast("품목을 입력하세요");return}
+      S.runs.push({id:uid(),date:today(),item,why:$("#rn_why").value,amount:+$("#rn_amt").value||0});persist();toast("기록했습니다");break}
+    case"rundel":S.runs=S.runs.filter(r=>r.id!==id);persist();break;
+    case"addvendor":{const n={id:"v"+uid(),name:"새 거래처",phone:"",items:[]};S.vendors.push(n);ui.vid=n.id;persist();break}
+    case"vdel":if(S.vendors.length<2){toast("거래처는 1곳 이상 있어야 합니다");return}if(!confirmTwice(t))return;S.vendors=S.vendors.filter(x=>x.id!==v.id);S.orders=S.orders.filter(o=>o.vendorId!==v.id);ui.vid=S.vendors[0].id;persist();break;
+    case"iadd":{const n=$("#newitem").value.trim();if(!n)return;v.items.push({id:"i"+uid(),name:n,unit:"개",price:null});persist();break}
+    case"idel":if(!confirmTwice(t))return;v.items=v.items.filter(i=>i.id!==id);persist();break;
+    case"bkout":$("#bk").value=JSON.stringify(S);toast("아래 칸의 내용을 복사해 보관하세요");return;
+    case"bkin":{try{const o=JSON.parse($("#bk").value);if(!o.vendors||!o.orders)throw 0;S=o;persist();toast("가져왔습니다")}catch(e){toast("형식이 맞지 않습니다");return}break}
+    case"reset":if(!confirmTwice(t))return;S=seed();ui.draft={};ui.vid=S.vendors[0].id;persist();break;
+  }
+  render();
+});
+let armed=null;
+function confirmTwice(btn){ // iframe에서는 confirm()이 막혀 있어 두 번 눌러 확인
+  if(armed===btn.dataset.act+btn.dataset.id){armed=null;return true}
+  armed=btn.dataset.act+btn.dataset.id;toast("한 번 더 누르면 삭제됩니다");setTimeout(()=>{armed=null},3000);return false;
+}
+document.addEventListener("input",ev=>{
+  const t=ev.target;const a=t.dataset&&t.dataset.act;if(!a)return;const id=t.dataset.id;const v=V(ui.vid);
+  if(a==="qty"){draftOf(v.id)[id]=t.value===""?0:+t.value;clearTimeout(window._rt);window._rt=setTimeout(render,500)}
+  else if(a==="got"){ui.rcv.got[id]=t.value===""?0:+t.value;clearTimeout(window._rt);window._rt=setTimeout(render,500)}
+  else if(a==="store"){S.store=t.value;persist()}
+  else if(a==="vname"){v.name=t.value;persist()}
+  else if(a==="vphone"){v.phone=t.value.replace(/[^\d+]/g,"");persist()}
+  else if(a==="iname"){itemOf(v,id).name=t.value;persist()}
+  else if(a==="iunit"){itemOf(v,id).unit=t.value;persist()}
+});
+init();
+if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})})}
+</script>
+</body>
+</html>
