@@ -1,102 +1,273 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#b4381f">
+<meta name="theme-color" content="#f4f5f7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="주문 가드">
+<meta name="apple-mobile-web-app-title" content="Order Guard">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" href="icons/icon-192.png">
-<title>주문 가드 — 발주 누락 방지 MVP</title>
+<title>Order Guard</title>
 <style>
-:root{--bg:#f6f5f1;--card:#fff;--ink:#1f1d1a;--mut:#6b675f;--line:#e4e1d8;--acc:#b4381f;--acc2:#8f2b17;--ok:#2f7d4f;--warn:#b7791f;--bad:#c0392b;--r:12px}
+:root{--bg:#f4f5f7;--card:#fff;--ink:#111827;--ink2:#374151;--mut:#6b7280;--line:#e5e7eb;--pri:#0f766e;--pri2:#0d5f59;--priBg:#e6f4f2;--ok:#15803d;--okBg:#e8f5ec;--warn:#b45309;--warnBg:#fef3c7;--bad:#b91c1c;--badBg:#fee2e2;--blue:#1d4ed8;--blueBg:#e0e7ff;--r:14px;--sh:0 1px 2px rgba(17,24,39,.06),0 1px 3px rgba(17,24,39,.04)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;padding-bottom:84px}
-header{padding:calc(14px + env(safe-area-inset-top)) 16px 6px}
-h1{font-size:18px;margin:0}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--ink);font:15px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;padding-bottom:calc(76px + env(safe-area-inset-bottom));-webkit-font-smoothing:antialiased}
+body.cta{padding-bottom:calc(140px + env(safe-area-inset-bottom))}
+button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;color:inherit}
+/* app bar */
+.bar{position:sticky;top:0;z-index:5;background:rgba(244,245,247,.92);backdrop-filter:saturate(1.6) blur(12px);-webkit-backdrop-filter:saturate(1.6) blur(12px);padding:calc(8px + env(safe-area-inset-top)) 16px 8px}
+.bar .in{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--pri);color:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+.bt{flex:1;min-width:0}
+.bt b{display:block;font-size:16px;letter-spacing:-.01em}
+.bt span{display:block;font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#9ca3af;margin-right:5px;vertical-align:1px}
+.dot.ok{background:#22c55e}.dot.err{background:#ef4444}
+.langs{display:flex;background:#e5e7eb;border-radius:999px;padding:2px;flex:none}
+.langs button{border:0;background:none;padding:4px 10px;font-size:12px;border-radius:999px;color:var(--mut);font-weight:600}
+.langs button.on{background:#fff;color:var(--ink);box-shadow:var(--sh)}
+main{padding:4px 16px 20px;max-width:680px;margin:0 auto}
+/* type */
+.h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin:8px 0 2px}
+.cap{font-size:13px;color:var(--mut)}
+.sec{font-size:13px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin:20px 4px 8px}
 .sub{color:var(--mut);font-size:12.5px}
-main{padding:8px 12px 24px;max-width:640px;margin:0 auto}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;margin:10px 0}
+/* cards */
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:14px;margin:10px 0}
+.card.flush{padding:0;overflow:hidden}
 .row{display:flex;gap:8px;align-items:center}
-.sp{justify-content:space-between}
-.chips{display:flex;gap:6px;overflow-x:auto;padding:4px 0}
-.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;white-space:nowrap;font-size:14px;cursor:pointer}
-.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-.btn{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:10px 14px;font-weight:600}
+.sp{justify-content:space-between}.wrap{flex-wrap:wrap}
+/* summary */
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.sum div{background:var(--card);border-radius:12px;box-shadow:var(--sh);padding:10px 12px}
+.sum b{display:block;font-size:22px;font-weight:700;letter-spacing:-.02em}
+.sum span{font-size:11.5px;color:var(--mut)}
+/* vendor list */
+.vrow{display:flex;align-items:center;gap:12px;padding:12px 14px;border:0;background:none;width:100%;text-align:left;border-bottom:1px solid var(--line)}
+.vrow:last-child{border-bottom:0}
+.vrow:active{background:#f9fafb}
+.av{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex:none}
+.vt{flex:1;min-width:0}
+.vt b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vt span{display:block;font-size:12.5px;color:var(--mut);margin-top:1px}
+.chev{color:#c4c8cf;flex:none}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;border-radius:999px;padding:3px 9px;white-space:nowrap;flex:none;background:#f3f4f6;color:var(--mut)}
+.pill.draft{background:var(--warnBg);color:var(--warn)}
+.pill.sent{background:var(--blueBg);color:var(--blue)}
+.pill.ok{background:var(--okBg);color:var(--ok)}
+.pill.bad{background:var(--badBg);color:var(--bad)}
+/* buttons */
+.btn{background:var(--pri);color:#fff;border:0;border-radius:12px;padding:12px 16px;font-weight:600;font-size:15px}
+.btn:active{background:var(--pri2)}
+.btn.full{width:100%}
 .btn.sec{background:#fff;color:var(--ink);border:1px solid var(--line)}
-.btn.sm{padding:6px 10px;font-size:13px}
-.btn:disabled{opacity:.4}
-.item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
-.item:last-child{border-bottom:0}
-.item .nm{flex:1;min-width:0}
-.item .nm b{font-weight:600}
-.item .meta{font-size:12px;color:var(--mut)}
-.step{display:flex;align-items:center;gap:4px}
-.step button{width:40px;height:40px;border-radius:9px;border:1px solid var(--line);background:#fff;font-size:18px;line-height:1}
-.step input{font-size:16px;width:56px;text-align:center;height:40px;border:1px solid var(--line);border-radius:9px}
-.hint{background:#fff6e5;border:1px solid #f0d9a4;border-radius:10px;padding:10px;margin:8px 0;font-size:14px}
-.hint b{color:var(--warn)}
-.tag{display:inline-block;font-size:11.5px;border-radius:6px;padding:1px 6px;background:#eee;color:var(--mut)}
-.tag.bad{background:#fbe5e1;color:var(--bad)}.tag.ok{background:#e1f2e8;color:var(--ok)}.tag.warn{background:#fdefd2;color:var(--warn)}
-textarea,input[type=text],input[type=number],select{font:inherit;font-size:16px;width:100%;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff}
-textarea{min-height:150px;resize:vertical}
-label{font-size:12.5px;color:var(--mut);display:block;margin:8px 0 3px}
-nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom)}
-nav button{flex:1;border:0;background:none;padding:10px 0 9px;font-size:12.5px;color:var(--mut)}
-nav button.on{color:var(--acc);font-weight:700}
-nav button i{display:block;font-style:normal;font-size:19px}
-.kpi{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.kpi div{background:#faf9f5;border:1px solid var(--line);border-radius:10px;padding:10px}
-.kpi b{font-size:22px;display:block}
+.btn.ghost{background:none;color:var(--pri);padding:8px 10px;border:0}
+.btn.sm{padding:7px 12px;font-size:13px;border-radius:10px}
+.btn.danger{background:#fff;color:var(--bad);border:1px solid #f3c2c2}
+a.btn{display:inline-block;text-decoration:none;text-align:center}
+.iconbtn{width:36px;height:36px;border-radius:10px;border:0;background:#fff;box-shadow:var(--sh);display:flex;align-items:center;justify-content:center;flex:none}
+/* screen header */
+.sh{display:flex;align-items:center;gap:10px;margin:6px 0 10px}
+.sh .tt{flex:1;min-width:0}
+.sh .tt b{display:block;font-size:20px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* search + segmented */
+.search{display:flex;align-items:center;gap:8px;background:#fff;border-radius:12px;box-shadow:var(--sh);padding:0 12px;height:42px}
+.search input{border:0;outline:0;flex:1;font-size:16px;background:none;padding:0;min-width:0}
+.seg{display:flex;background:#e5e7eb;border-radius:10px;padding:2px;margin:10px 0}
+.seg button{flex:1;border:0;background:none;border-radius:8px;padding:7px 4px;font-size:13px;font-weight:600;color:var(--mut)}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:var(--sh)}
+/* order grid */
+.gi{display:grid;grid-template-columns:24px minmax(0,1fr) 64px 44px;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--line)}
+.gi:last-child{border-bottom:0}
+.gi.hdr{font-size:11px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;padding:8px 14px;background:#fafafa}
+.gi.on{background:#f2faf8}
+.gi.off .n1{color:var(--ink2);font-weight:500}
+.ckw{display:flex;align-items:center;justify-content:center;height:30px;margin:0}
+.ck{width:14px;height:14px;accent-color:var(--pri);margin:0}
+.n1{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lq{font-size:13px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.qn{width:44px;height:28px;padding:0;text-align:center;font-size:16px;border:1px solid var(--line);border-radius:8px;background:#fff;font-variant-numeric:tabular-nums}
+.qn::-webkit-outer-spin-button,.qn::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.qn{-moz-appearance:textfield}
+.qn:focus{outline:2px solid var(--pri);outline-offset:-1px;border-color:var(--pri)}
+.gi.on .qn{border-color:#9fd3ca;font-weight:600}
+/* banner */
+.banner{display:flex;gap:10px;background:var(--warnBg);border-radius:12px;padding:10px 12px;margin:10px 0;font-size:13.5px;color:#78350f}
+.banner a{color:#92400e;font-weight:600}
+/* sticky CTA */
+.cta{position:fixed;left:0;right:0;bottom:calc(62px + env(safe-area-inset-bottom));padding:10px 16px;background:linear-gradient(180deg,rgba(244,245,247,0),var(--bg) 30%);z-index:4}
+.cta .in{max-width:680px;margin:0 auto}
+.cta .btn{width:100%;display:flex;justify-content:space-between;align-items:center;box-shadow:0 6px 16px rgba(15,118,110,.25)}
+/* review */
+.rl{display:flex;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(--line);font-size:14.5px}
+.rl:last-child{border-bottom:0}
+.rl span:last-child{font-variant-numeric:tabular-nums;color:var(--ink2);font-weight:600}
+.msg{background:#e9f5ff;border-radius:16px 16px 4px 16px;padding:12px 14px;font-size:14px;white-space:pre-wrap;color:#0b2540;margin:4px 0 0 24px}
+textarea{width:100%;font:inherit;font-size:16px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-height:150px;background:#fff;resize:vertical}
+.steps{counter-reset:s;margin:0;padding:0;list-style:none}
+.steps li{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.steps li:first-child{border-top:0}
+.steps li:before{counter-increment:s;content:counter(s);width:22px;height:22px;border-radius:50%;background:var(--priBg);color:var(--pri);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.steps li>div{flex:1}
+/* settings list */
+.fl{display:block;padding:10px 14px;border-bottom:1px solid var(--line)}
+.fl:last-child{border-bottom:0}
+.fl label{display:block;font-size:12px;color:var(--mut);margin-bottom:3px}
+.fl input,.fl select{width:100%;border:0;outline:0;font:inherit;font-size:16px;background:none;padding:2px 0;color:var(--ink)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 6px;-webkit-overflow-scrolling:touch}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;white-space:nowrap;font-size:13.5px;flex:none}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.irow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 56px 30px;gap:6px;align-items:center;padding:8px 14px;border-bottom:1px solid var(--line)}
+.irow input{width:100%;border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:16px;font-family:inherit;min-width:0}
+.x{border:0;background:none;color:#9ca3af;font-size:20px;line-height:1;padding:0}
+.inp{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:16px;font-family:inherit;background:#fff}
+.lbl{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px}
+select.inp{appearance:auto}
+/* insights */
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.kpi div{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:14px}
+.kpi b{font-size:26px;font-weight:700;display:block;letter-spacing:-.02em}
 .kpi span{font-size:12px;color:var(--mut)}
-h2{font-size:15px;margin:14px 2px 4px}
-.empty{color:var(--mut);font-size:13.5px;padding:8px 2px}
-#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:90px;background:#222;color:#fff;border-radius:999px;padding:8px 14px;font-size:13px;opacity:0;transition:.2s;pointer-events:none}
-#toast.on{opacity:.95}
-.sync{font-size:11.5px;color:var(--mut)}
-a.btn{display:inline-block;text-decoration:none}
+.kpi div.alert b{color:var(--bad)}
+.bar2{height:6px;border-radius:3px;background:#fee2e2;margin-top:5px;overflow:hidden}
+.bar2 i{display:block;height:100%;background:#ef4444;border-radius:3px}
+.empty{color:var(--mut);font-size:13.5px;padding:18px 14px;text-align:center}
+/* nav */
+nav{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav button{flex:1;border:0;background:none;padding:8px 0 7px;font-size:11px;font-weight:600;color:#9ca3af;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
+nav button.on{color:var(--pri)}
+nav .soon{position:absolute;top:2px;left:calc(50% + 4px);background:#e5e7eb;color:#6b7280;font-size:9px;border-radius:999px;padding:1px 5px;font-weight:700}
+nav button{min-width:0}
+nav .bd{position:absolute;top:4px;left:calc(50% + 6px);background:var(--bad);color:#fff;font-size:10px;border-radius:999px;min-width:16px;height:16px;padding:0 4px;display:flex;align-items:center;justify-content:center}
+#toast{position:fixed;left:50%;transform:translateX(-50%) translateY(8px);bottom:calc(140px + env(safe-area-inset-bottom));background:#111827;color:#fff;border-radius:12px;padding:10px 14px;font-size:13.5px;opacity:0;transition:.2s;pointer-events:none;max-width:90%;text-align:center;z-index:20}
+#toast.on{opacity:.96;transform:translateX(-50%)}
+#upd{display:none;position:fixed;left:12px;right:12px;top:calc(8px + env(safe-area-inset-top));background:#111827;color:#fff;border-radius:14px;padding:10px 12px;z-index:30;font-size:14px;align-items:center;justify-content:space-between}
 </style>
 </head>
 <body>
-<header>
-  <h1>주문 가드 <span class="sub">발주 누락 방지 · 파일럿 MVP</span></h1>
-  <div class="sub" id="store"></div>
-  <div class="sync" id="sync"></div>
-</header>
+<div class="bar"><div class="in"><div class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg></div><div class="bt"><b id="ttl"></b><span id="sync"></span></div><div class="langs" id="langs"></div></div></div>
 <main id="app"></main>
+<div id="ctaw"></div>
 <nav id="nav"></nav>
+<div id="upd"><span id="updt"></span><button class="btn sm" onclick="location.reload()" id="updb"></button></div>
 <div id="toast"></div>
 
+<script src="config.js"></script>
 <script>
 "use strict";
-/* ---------- 초기 데이터: 파일럿 인보이스 9건에서 추출 (거래처명은 일반 명칭으로 대체) ---------- */
+const APP_VERSION="0.7.0";
+/* ---------- 문구 (English default / 한국어) ---------- */
+const T={
+en:{ homeT:"Today's orders",sumDraft:"Drafts",sumWait:"Awaiting delivery",sumRuns:"Store runs (30d)",vendors:"Vendors",lastOn:"Last order {d}",
+ stDraft:"Draft · {n}",stSent:"Sent",stDone:"Done today",stNone:"No order",orderGuide:"Order guide",search:"Search items",noMatch:"No matching items",
+ itemsSel:"{n} items selected",reviewCta:"Review order",reviewT:"Review & send",msgT:"Message to vendor",toV:"To: {v}",noNumber:"no number set",
+ step1:"Send the text from your phone",step1b:"Or copy the message",step2:"Then mark the order as sent",markSentShort:"Mark sent",
+ rcvSub:"Order of {d} · check delivery",recvSub:"Tick what arrived. Anything not ticked is logged as short.",amtShort:"Amount",
+ gGeneral:"General",gVendors:"Vendors",gData:"Data & backup",
+ colItem:"Item",colLast:"Last",colQty:"Qty",colOrdered:"Ordered",colGot:"Got",
+ sLocalOnly:"Saved on this device only",sCloudOff:"Saved on this device · cloud backup is off (see Settings)",sCloudErr:"Cloud backup failed — will retry",sCloudOk:"Backed up to cloud at {h}",sCloudWait:"Backing up to cloud…",
+ cloudT:"Cloud backup",cloudOffHelp:"Cloud backup is not set up for this app yet. See the README to turn it on.",cloudHelp:"Sign in with your email to back up your data to the server and use it on another phone.",cloudAs:"Signed in as {e}",cloudLast:"Last backup: {d}",
+ cloudNow:"Back up now",cloudRestore:"Restore from cloud",cloudOut:"Sign out",cloudEmail:"Email",cloudSend:"Send code",cloudCode:"6-digit code from the email",cloudVerify:"Sign in",
+ needEmail:"Enter your email",codeSent:"Code sent — check your email",failed:"Failed",cloudBacking:"Backing up…",cloudRestored:"Restored from cloud",cloudNone:"No backup found in the cloud",
+title:"Order Guard",sub:"Never miss an order",tabOrder:"Orders",tabRecv:"Receive",tabLog:"Insights",tabSet:"Settings",
+ loading:"Loading…",langLabel:"Language",
+ sCloud:"Cloud connected",sCloudNew:"Cloud connected (new)",sLocal:"Saved on this device only (sign in for cloud save)",sSaved:"Saved (cloud)",sFail:"Cloud save failed — saved on this device only",
+ orderSheet:"{v} order sheet",loadLast:"Load last order",noLast:"No previous order",loaded:"Loaded {d} order — adjust quantities",
+ ordered:"Ordered",notOrdered:"Not ordered",all:"All",noItems:"No items yet. Add items in Settings.",
+ hintT:"Forgot something?",hintB:"In every recent order, but not in this one:",
+ last:"Last {q}",noHist:"No history",preview:"Message preview ({n} items)",copy:"Copy",copied:"Copied",selManual:"Select the text and copy it manually",
+ openSms:"Open Messages",noPhone:"No phone number set — pick the contact in your Messages app. (Add a number in Settings to fill it in automatically.)",
+ markSent:"Mark as sent — wait for delivery",savedWait:"Saved — waiting for delivery",noOrderYet:"Enter at least one quantity first",
+ rcvTitle:"{v} · {d} order — check delivery",back:"Back",rcvHelp:"Tick what arrived. Change the number if only part arrived.",ordQ:"Ordered {q}",shortQ:"Short {q}",ok:"OK",
+ saveRcv:"Save delivery check",pendTitle:"Waiting for delivery",pendNone:"No orders waiting. Mark an order as sent on the Order tab and it will appear here.",items:"{n} items",checkBtn:"Check delivery",
+ recentRcv:"Recent deliveries",shortN:"Short {n}",allGood:"All good",shortSaved:"{n} short item(s) recorded",allGoodSaved:"Saved — nothing missing",
+ last30:"Last 30 days",kOrders:"Orders",kShort:"Items short on delivery",kRuns:"Emergency store runs",kAmt:"Emergency spend",
+ topMiss:"Most often missed",noTop:"Nothing recorded yet. Log your emergency store runs below.",logRun:"Did you make an emergency store run? Log it",
+ item:"Item",itemPh:"e.g. Scallion",why:"Reason",amt:"Amount ($, optional)",saveRun:"Save entry",runs:"Emergency purchases",del:"Delete",recorded:"Recorded",needItem:"Enter an item",
+ r_forgot:"Forgot to order it",r_notdelivered:"Not delivered",r_short:"Quantity was not enough",r_busy:"Sales spiked",r_other:"Other",
+ storeName:"Store name (Korean / main)",storeEn:"Store name (English, used in English messages)",addVendor:"+ Add vendor",vendorName:"Vendor name (main)",vendorEn:"Vendor name (English)",
+ tabInv:"Invoices",tabPrice:"Prices",soon:"Coming soon",soonTag:"Soon",wantIt:"I'd use this",wantOn:"Noted — thanks",soonNote:"Not available yet. Tap if you want it sooner.",
+ invT:"Invoices",invLead:"Snap a photo of each delivery invoice and let the app read it.",invF:["Photo or email in, no typing","Reads vendor, date, items, quantities and prices","Checks it against what you ordered and received","Flags mismatches before you pay"],
+ priceT:"Prices & costs",priceLead:"See what you pay for each item, and when it changes.",priceF:["Price history for every item","Alert when a vendor raises a price","Weekly food-cost and profit overview","Export to QuickBooks"],
+ dueT:"Due today",dueNone:"Nothing due today",dueAt:"by {t}",dueLate:"Past cutoff",dueOpen:"Order now",dueNext:"Next: {d} {t}",dueHint:"Set each vendor's order days in Settings to get reminders.",dueGo:"Set up",
+ schedT:"Order schedule",schedDays:"Order days",schedCut:"Order by (time)",schedLead:"Remind me before",schedNote:"Reminders come from your phone's calendar, so they ring even when this app is closed. Add them once; re-importing updates the same events.",icsBtn:"Add reminders to calendar",icsNone:"Pick order days for at least one vendor first",icsDone:"Calendar file ready",min:"{n} min",hr:"{n} hr",dayFull:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],icsTitle:"Order: {v}",icsDesc:"Open Order Guard and send the order.",
+ phone:"Phone number for text messages",smsLang:"Message language for this vendor",smsKo:"Korean",smsEn:"English",
+ itemsN:"Items ({n})",nameMain:"Name (Korean / main)",nameEn:"English name",unit:"Unit",newItem:"New item name",add:"Add",delVendor:"Delete this vendor",
+ backup:"Backup",backupHelp:"Copy your data as text to keep it safe, or paste it here to restore.",export:"Export",import:"Import",reset:"Reset to sample",
+ exportDone:"Copy the text in the box below",imported:"Imported",badFormat:"Format not recognized",tapAgain:"Tap again to delete",needOne:"Keep at least one vendor",
+ version:"App version {v}",newVer:"A new version is available.",reload:"Reload",
+ smsHead:"[{s}] Order for {d}:",smsTail:"Total {n} items. Please reply with the item count to confirm. Thank you.",
+ newVendor:"New vendor"},
+ko:{ homeT:"오늘의 발주",sumDraft:"작성 중",sumWait:"입고 대기",sumRuns:"긴급 장보기(30일)",vendors:"거래처",lastOn:"최근 주문 {d}",
+ stDraft:"작성 중 · {n}",stSent:"보냄",stDone:"오늘 완료",stNone:"주문 전",orderGuide:"주문 목록",search:"품목 검색",noMatch:"맞는 품목이 없습니다",
+ itemsSel:"{n}개 품목 선택",reviewCta:"주문 확인",reviewT:"확인 후 보내기",msgT:"거래처에 보낼 문자",toV:"받는 사람: {v}",noNumber:"번호 미등록",
+ step1:"내 폰에서 문자 보내기",step1b:"또는 문자 내용 복사",step2:"보낸 뒤 '보냄'으로 표시",markSentShort:"보냄 표시",
+ rcvSub:"{d} 주문 · 입고 확인",recvSub:"도착한 품목을 체크하세요. 체크 안 된 품목은 부족으로 기록됩니다.",amtShort:"금액",
+ gGeneral:"기본",gVendors:"거래처",gData:"데이터·백업",
+ colItem:"품목",colLast:"지난번",colQty:"수량",colOrdered:"주문",colGot:"도착",
+ sLocalOnly:"이 기기에만 저장됩니다",sCloudOff:"이 기기에 저장됨 · 클라우드 백업 꺼짐 (설정 탭)",sCloudErr:"클라우드 백업 실패 — 다시 시도합니다",sCloudOk:"{h}에 클라우드 백업됨",sCloudWait:"클라우드 백업 중…",
+ cloudT:"클라우드 백업",cloudOffHelp:"이 앱에는 아직 클라우드 백업이 설정되지 않았습니다. README를 보고 켜세요.",cloudHelp:"이메일로 로그인하면 데이터가 서버에 백업되고 다른 폰에서도 쓸 수 있습니다.",cloudAs:"{e} 로 로그인됨",cloudLast:"마지막 백업: {d}",
+ cloudNow:"지금 백업",cloudRestore:"클라우드에서 복원",cloudOut:"로그아웃",cloudEmail:"이메일",cloudSend:"인증번호 보내기",cloudCode:"이메일로 받은 인증번호",cloudVerify:"로그인",
+ needEmail:"이메일을 입력하세요",codeSent:"인증번호를 보냈습니다 — 이메일을 확인하세요",failed:"실패",cloudBacking:"백업 중…",cloudRestored:"클라우드에서 복원했습니다",cloudNone:"클라우드에 백업이 없습니다",
+title:"주문 가드",sub:"발주 누락 방지",tabOrder:"발주",tabRecv:"입고",tabLog:"분석",tabSet:"설정",
+ loading:"불러오는 중…",langLabel:"언어",
+ sCloud:"클라우드 연결됨",sCloudNew:"클라우드 연결됨(새로 시작)",sLocal:"이 기기에만 저장됩니다 (로그인하면 클라우드 저장)",sSaved:"저장됨 (클라우드)",sFail:"클라우드 저장 실패 — 이 기기에만 저장됨",
+ orderSheet:"{v} 주문서",loadLast:"지난 주문 불러오기",noLast:"지난 주문이 없습니다",loaded:"{d} 주문을 불러왔습니다 — 수량을 고치세요",
+ ordered:"주문함",notOrdered:"안 함",all:"전체",noItems:"등록된 품목이 없습니다. 설정 탭에서 추가하세요.",
+ hintT:"빠진 것 아닌가요?",hintB:"최근 주문마다 있었는데 이번엔 없는 품목:",
+ last:"지난번 {q}",noHist:"이력 없음",preview:"문자 미리보기 ({n}개 품목)",copy:"복사",copied:"복사했습니다",selManual:"직접 선택해 복사하세요",
+ openSms:"문자앱 열기",noPhone:"전화번호가 없으면 문자앱에서 받는 사람을 직접 고르세요. (설정 탭에서 번호를 넣으면 자동 입력)",
+ markSent:"주문 보냈음 — 입고 대기로 저장",savedWait:"입고 대기로 저장했습니다",noOrderYet:"수량을 하나 이상 입력하세요",
+ rcvTitle:"{v} · {d} 주문 입고 확인",back:"뒤로",rcvHelp:"도착한 것은 체크하세요. 일부만 왔으면 숫자를 고치세요.",ordQ:"주문 {q}",shortQ:"부족 {q}",ok:"OK",
+ saveRcv:"입고 확인 저장",pendTitle:"입고 대기 주문",pendNone:"입고 대기 중인 주문이 없습니다. 발주 탭에서 주문을 \"보냈음\"으로 저장하면 여기에 나타납니다.",items:"{n}개 품목",checkBtn:"입고 확인",
+ recentRcv:"최근 입고 결과",shortN:"부족 {n}건",allGood:"이상 없음",shortSaved:"부족 {n}건 기록",allGoodSaved:"이상 없음으로 저장",
+ last30:"최근 30일",kOrders:"주문 건수",kShort:"입고 부족 품목",kRuns:"급히 장 보러 간 횟수",kAmt:"긴급 구매 금액",
+ topMiss:"자주 놓치는 품목",noTop:"아직 기록이 없습니다. 장 보러 간 일을 아래에 기록해 보세요.",logRun:"급히 장 보러 갔나요? 기록하기",
+ item:"품목",itemPh:"예: 대파",why:"이유",amt:"금액 ($, 모르면 비워두세요)",saveRun:"기록 저장",runs:"긴급 구매 기록",del:"삭제",recorded:"기록했습니다",needItem:"품목을 입력하세요",
+ r_forgot:"주문에서 빠뜨림",r_notdelivered:"입고 때 안 왔음",r_short:"수량이 모자람",r_busy:"갑자기 많이 팔림",r_other:"기타",
+ storeName:"매장 이름 (한글/기본)",storeEn:"매장 이름 (영문, 영어 문자에 사용)",addVendor:"+ 거래처 추가",vendorName:"거래처 이름 (기본)",vendorEn:"거래처 이름 (영문)",
+ tabInv:"인보이스",tabPrice:"단가",soon:"곧 제공 예정",soonTag:"예정",wantIt:"쓰고 싶어요",wantOn:"반영했습니다. 감사합니다",soonNote:"아직 사용할 수 없습니다. 빨리 필요하시면 눌러 주세요.",
+ invT:"인보이스",invLead:"납품 인보이스를 사진으로 찍으면 앱이 읽어 줍니다.",invF:["사진이나 이메일로 넣기만 하면 됨(직접 입력 없음)","거래처, 날짜, 품목, 수량, 단가를 자동 인식","주문·입고 내용과 자동 대조","결제 전에 불일치 알림"],
+ priceT:"단가와 원가",priceLead:"품목별로 얼마에 사는지, 언제 바뀌었는지 봅니다.",priceF:["모든 품목의 단가 이력","거래처가 가격을 올리면 알림","주간 식자재 원가와 손익 요약","QuickBooks로 내보내기"],
+ dueT:"오늘 주문할 곳",dueNone:"오늘 주문할 곳 없음",dueAt:"{t}까지",dueLate:"마감 지남",dueOpen:"지금 주문",dueNext:"다음: {d} {t}",dueHint:"설정에서 거래처별 주문 요일을 정하면 알려드립니다.",dueGo:"설정하기",
+ schedT:"주문 일정",schedDays:"주문 요일",schedCut:"주문 마감 시간",schedLead:"미리 알림",schedNote:"알림은 휴대폰 캘린더가 울려 주기 때문에 앱을 닫아 두어도 울립니다. 한 번만 추가하면 되고, 다시 가져와도 같은 일정이 갱신됩니다.",icsBtn:"캘린더에 알림 추가",icsNone:"먼저 거래처의 주문 요일을 하나 이상 선택하세요",icsDone:"캘린더 파일을 만들었습니다",min:"{n}분",hr:"{n}시간",dayFull:["일","월","화","수","목","금","토"],icsTitle:"발주: {v}",icsDesc:"주문 가드를 열어 주문을 보내세요.",
+ phone:"문자 받을 전화번호",smsLang:"이 거래처에 보낼 문자 언어",smsKo:"한국어",smsEn:"영어",
+ itemsN:"품목 ({n})",nameMain:"이름 (한글/기본)",nameEn:"영문 이름",unit:"단위",newItem:"새 품목 이름",add:"추가",delVendor:"이 거래처 삭제",
+ backup:"백업",backupHelp:"데이터를 텍스트로 복사해 보관하거나, 여기에 붙여넣어 복원할 수 있습니다.",export:"내보내기",import:"가져오기",reset:"처음 상태로",
+ exportDone:"아래 칸의 내용을 복사해 보관하세요",imported:"가져왔습니다",badFormat:"형식이 맞지 않습니다",tapAgain:"한 번 더 누르면 삭제됩니다",needOne:"거래처는 1곳 이상 있어야 합니다",
+ version:"앱 버전 {v}",newVer:"새 버전이 있습니다.",reload:"새로고침",
+ smsHead:"[{s}] {d} 주문입니다.",smsTail:"총 {n}개 품목입니다. 확인 후 품목 수 회신 부탁드립니다. 감사합니다.",
+ newVendor:"새 거래처"}
+};
+const UNIT_EN={"박스":"box","포대":"bag","개":"ea","통":"jug","케이스":"case"};
+
+/* ---------- 초기 데이터: 파일럿 인보이스 9건에서 추출 (거래처명은 일반 명칭) ---------- */
 function seed(){
-  const it=(id,name,unit,price)=>({id,name,unit:unit||"개",price:price||null});
-  const V1=[it("a1","순두부(벌크)","박스",23.5),it("a2","무","박스",23),it("a3","배추","박스",18),it("a4","대파","박스",51),it("a5","콩나물","박스",9),
-    it("a6","쌀 40lb","포대",26),it("a7","찹쌀","포대",44),it("a8","부침가루","개",24),it("a9","간장 5gal","통",38),it("a10","어묵","박스",49),
-    it("a11","냉동 오징어","박스",139),it("a12","굴","박스",110),it("a13","가래떡","박스",20),it("a14","설탕","포대",40),it("a15","계란 30dz","박스",22),
-    it("a16","라면사리","박스",26),it("a17","당면","박스",60),it("a18","튀김가루","개",24),it("a19","참기름 5gal","통",129),it("a20","미림","개",36),it("a21","새우튀김","박스",60)];
-  const V2=[it("b1","조개","박스",48),it("b2","새우 10lb","박스",null),it("b3","오징어 10lb","박스",136)];
-  const V3=[it("c1","야채만두","케이스",190),it("c2","고기만두","케이스",200)];
-  const V4=[it("d1","델리용기 12oz","박스",48.5),it("d2","스시용기","박스",59),it("d3","롤백 10x15","박스",16),it("d4","롤백 12x20","박스",16),
-    it("d5","본드롤(영수증용지)","박스",57),it("d6","감열지롤","박스",57),it("d7","롤타월","박스",23),it("d8","화장지","박스",25)];
-  const V5=[it("e1","양념 페이스트","개",298),it("e2","LA 소스","개",63),it("e3","돼지 소스","개",76)];
-  const V6=[];
+  const it=(id,name,en,unit,price)=>({id,name,en,unit:unit||"개",price:price||null});
+  const V1=[it("a1","순두부(벌크)","Soft tofu (bulk)","박스",23.5),it("a2","무","Korean radish","박스",23),it("a3","배추","Napa cabbage","박스",18),it("a4","대파","Scallion","박스",51),it("a5","콩나물","Bean sprouts","박스",9),
+    it("a6","쌀 40lb","Rice 40lb","포대",26),it("a7","찹쌀","Sweet rice","포대",44),it("a8","부침가루","Griddle coat mix","개",24),it("a9","간장 5gal","Soy sauce 5gal","통",38),it("a10","어묵","Fish cake","박스",49),
+    it("a11","냉동 오징어","Frozen squid","박스",139),it("a12","굴","Oyster meat","박스",110),it("a13","가래떡","Rice cake sticks","박스",20),it("a14","설탕","Sugar","포대",40),it("a15","계란 30dz","Eggs 30dz","박스",22),
+    it("a16","라면사리","Ramen noodles","박스",26),it("a17","당면","Vermicelli","박스",60),it("a18","튀김가루","Frying mix","개",24),it("a19","참기름 5gal","Sesame oil 5gal","통",129),it("a20","미림","Mirin","개",36),it("a21","새우튀김","Shrimp tempura","박스",60)];
+  const V2=[it("b1","조개","Clams","박스",48),it("b2","새우 10lb","Shrimp 10lb","박스",null),it("b3","오징어 10lb","Squid 10lb","박스",136)];
+  const V3=[it("c1","야채만두","Vegetable dumplings","케이스",190),it("c2","고기만두","Pork dumplings","케이스",200)];
+  const V4=[it("d1","델리용기 12oz","Deli container 12oz","박스",48.5),it("d2","스시용기","Sushi container","박스",59),it("d3","롤백 10x15","Roll bag 10x15","박스",16),it("d4","롤백 12x20","Roll bag 12x20","박스",16),
+    it("d5","본드롤(영수증용지)","Bond roll","박스",57),it("d6","감열지롤","Thermal roll","박스",57),it("d7","롤타월","Roll towel","박스",23),it("d8","화장지","Toilet tissue","박스",25)];
+  const V5=[it("e1","양념 페이스트","Seasoned paste","개",298),it("e2","LA 소스","LA sauce","개",63),it("e3","돼지 소스","Pork sauce","개",76)];
   const o=(id,v,date,lines)=>({id,vendorId:v,date,status:"received",lines,received:null,shorts:[]});
-  const q=(a)=>a.map(x=>({itemId:x[0],qty:x[1]}));
+  const q=a=>a.map(x=>({itemId:x[0],qty:x[1]}));
   return {
-    store:"소공동순두부 리지우드",
+    lang:"en",store:"소공동순두부 리지우드",storeEn:"",drafts:{},
     vendors:[
-      {id:"v1",name:"채소·식품 도매",phone:"",items:V1},
-      {id:"v6",name:"고기 거래처",phone:"",items:V6},
-      {id:"v2",name:"해산물",phone:"",items:V2},
-      {id:"v3",name:"만두류",phone:"",items:V3},
-      {id:"v5",name:"본사 공급",phone:"",items:V5},
-      {id:"v4",name:"일회용품·포장재",phone:"",items:V4}
+      {id:"v1",name:"채소·식품 도매",en:"Produce & grocery wholesale",phone:"",smsLang:"ko",items:V1},
+      {id:"v6",name:"고기 거래처",en:"Meat vendor",phone:"",smsLang:"ko",items:[]},
+      {id:"v2",name:"해산물",en:"Seafood",phone:"",smsLang:"ko",items:V2},
+      {id:"v3",name:"만두류",en:"Dumplings",phone:"",smsLang:"ko",items:V3},
+      {id:"v5",name:"본사 공급",en:"HQ supply",phone:"",smsLang:"ko",items:V5},
+      {id:"v4",name:"일회용품·포장재",en:"Disposables & packaging",phone:"",smsLang:"ko",items:V4}
     ],
     orders:[
       o("h1","v1","2026-10-13",q([["a1",6],["a2",1],["a3",4],["a4",2],["a5",5],["a6",4],["a7",1],["a8",1],["a9",2],["a10",2],["a11",1],["a12",1],["a13",4],["a14",1],["a15",2]])),
@@ -106,41 +277,43 @@ function seed(){
       o("h5","v5","2026-11-09",q([["e1",1],["e2",4],["e3",1]])),
       o("h6","v4","2026-09-30",q([["d1",2],["d2",4],["d3",1],["d4",2],["d5",1],["d6",2],["d7",2],["d8",2]]))
     ],
-    runs:[],
-    v:1
+    runs:[],v:1
   };
 }
+/* 이전 버전 데이터에 영문 이름·언어 설정을 채워 넣는다 */
+function migrate(x){
+  const base=seed(),em={};
+  base.vendors.forEach(v=>{em[v.id]=v.en;v.items.forEach(i=>em[i.id]=i.en)});
+  x.vendors.forEach(v=>{if(!v.en&&em[v.id])v.en=em[v.id];if(!v.smsLang)v.smsLang="ko";v.items.forEach(i=>{if(!i.en&&em[i.id])i.en=em[i.id]})});
+  x.vendors.forEach(v=>{if(!Array.isArray(v.days))v.days=[];if(!v.cutoff)v.cutoff="09:00"});if(x.lead==null)x.lead=30;if(!x.interest)x.interest={};if(!x.lang)x.lang="en";if(x.storeEn==null)x.storeEn="";if(!x.drafts)x.drafts={};if(!x.runs)x.runs=[];
+  return x;
+}
 /* ---------- 상태·저장 ---------- */
-let S=null, ui={tab:"order",vid:null,draft:{},rcv:null,sv:null};
-let dbDoc=null, saveT=null, saving=false, dirty=false, mode="local";
-const LS="orderguard.v1";
+let S=null,ui={tab:"order",sub:null,vid:null,rcv:null,filter:"all",q:""};
+let dbDoc=null,saveT=null,saving=false,dirty=false,syncKey="";
+const LS="orderguard.v1",LSL="orderguard.lang";
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const lang=()=>(S&&S.lang)||(function(){try{return localStorage.getItem(LSL)||"en"}catch(e){return"en"}})();
+function t(k,v){let s=(T[lang()]&&T[lang()][k]);if(s==null)s=T.en[k];if(s==null)s=k;if(v)for(const x in v)s=s.split("{"+x+"}").join(v[x]);return s}
+const nameOf=(o,l)=>(l||lang())==="en"?(o.en||o.name):o.name;
+const unitOf=(u,l)=>(l||lang())==="en"?(UNIT_EN[u]||u):u;
 const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 const md=d=>{const p=d.split("-");return +p[1]+"/"+ +p[2]};
 const uid=()=>Math.random().toString(36).slice(2,9);
-function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),1800)}
-function setSync(t){$("#sync").textContent=t}
-function load(){
-  try{const r=localStorage.getItem(LS);if(r)return JSON.parse(r)}catch(e){}
-  return null;
-}
-function persist(){
-  dirty=true;
-  try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}
-  clearTimeout(saveT);saveT=setTimeout(flush,800);
-}
+function toast(x){const e=$("#toast");e.textContent=x;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),1900)}
+function setSync(k){syncKey=k;const e=$("#sync");if(e)e.textContent=statusText()}
+function load(){try{const r=localStorage.getItem(LS);if(r)return migrate(JSON.parse(r))}catch(e){}return null}
+function persist(){dirty=true;cl.dirty=true;S.rev=(S.rev||0)+1;try{localStorage.setItem(LS,JSON.stringify(S));localStorage.setItem(LSL,S.lang)}catch(e){}clearTimeout(saveT);saveT=setTimeout(flush,800);cloudSoon()}
 async function flush(){
   if(!dbDoc||saving||!dirty)return;
   saving=true;dirty=false;
-  try{await dbDoc.set({json:JSON.stringify(S),at:Date.now()});setSync("저장됨 (클라우드)")}
-  catch(e){setSync("클라우드 저장 실패 — 이 기기에만 저장됨");dirty=true}
-  saving=false;
-  if(dirty)saveT=setTimeout(flush,1500);
+  try{await dbDoc.set({json:JSON.stringify(S),at:Date.now()});setSync("sSaved")}
+  catch(e){setSync("sFail");dirty=true}
+  saving=false;if(dirty)saveT=setTimeout(flush,1500);
 }
 async function init(){
-  S=load();
-  render();
+  S=load();render();
   try{
     const c=window.claude&&await Promise.race([window.claude.use("db"),new Promise(r=>setTimeout(()=>r(null),10000))]);
     if(c){
@@ -148,174 +321,429 @@ async function init(){
       const snap=await dbDoc.get();
       const ex=snap&&(typeof snap.exists==="function"?snap.exists():snap.exists);
       const data=ex?(typeof snap.data==="function"?snap.data():snap.data):null;
-      if(data&&data.json){S=JSON.parse(data.json);mode="cloud";setSync("클라우드 연결됨")}
-      else{S=S||seed();mode="cloud";persist();setSync("클라우드 연결됨(새로 시작)")}
-    }else{setSync("이 기기에만 저장됩니다 (로그인하면 클라우드 저장)")}
-  }catch(e){setSync("이 기기에만 저장됩니다")}
+      if(data&&data.json){S=migrate(JSON.parse(data.json));setSync("sCloud")}
+      else{S=S||seed();persist();setSync("sCloudNew")}
+    }
+  }catch(e){}
   if(!S){S=seed();persist()}
-  if(!ui.vid)ui.vid=S.vendors[0].id;
+  if(!ui.vid||!V(ui.vid))ui.vid=S.vendors[0].id;
   render();
+  await cloudBoot();
 }
 /* ---------- 도메인 로직 ---------- */
 const V=id=>S.vendors.find(v=>v.id===id);
 const itemOf=(v,id)=>v.items.find(i=>i.id===id);
 const vOrders=vid=>S.orders.filter(o=>o.vendorId===vid).sort((a,b)=>b.date.localeCompare(a.date));
-const fmtQty=n=>(Math.round(n*100)/100).toString();
-function freq(vid){ // 최근 4건 중 품목별 등장 비율
-  const os=vOrders(vid).slice(0,4);const m={};
-  os.forEach(o=>o.lines.forEach(l=>{if(l.qty>0)m[l.itemId]=(m[l.itemId]||0)+1}));
-  return {n:os.length,m};
-}
-function lastQty(vid,itemId){
-  for(const o of vOrders(vid)){const l=o.lines.find(l=>l.itemId===itemId&&l.qty>0);if(l)return l.qty}
-  return 0;
-}
-function draftOf(vid){return ui.draft[vid]||(ui.draft[vid]={})}
+const fq=n=>(Math.round(n*100)/100).toString();
+function freq(vid){const os=vOrders(vid).slice(0,4),m={};os.forEach(o=>o.lines.forEach(l=>{if(l.qty>0)m[l.itemId]=(m[l.itemId]||0)+1}));return{n:os.length,m}}
+function lastQty(vid,id){for(const o of vOrders(vid)){const l=o.lines.find(l=>l.itemId===id&&l.qty>0);if(l)return l.qty}return 0}
+const draftOf=vid=>{if(!S.drafts)S.drafts={};return S.drafts[vid]||(S.drafts[vid]={})};
 function buildSms(v,lines){
-  const rows=lines.map(l=>"- "+itemOf(v,l.itemId).name+" "+fmtQty(l.qty)+itemOf(v,l.itemId).unit);
-  return "["+S.store+"] "+md(today())+" 주문입니다.\n"+rows.join("\n")+"\n총 "+lines.length+"개 품목입니다. 확인 후 품목 수 회신 부탁드립니다. 감사합니다.";
+  const l=v.smsLang||"ko",tt=(k,vars)=>{let s=T[l][k];for(const x in vars)s=s.split("{"+x+"}").join(vars[x]);return s};
+  const store=l==="en"?(S.storeEn||S.store):S.store;
+  const rows=lines.map(x=>{const i=itemOf(v,x.itemId);return l==="en"?"- "+nameOf(i,"en")+": "+fq(x.qty)+" "+unitOf(i.unit,"en"):"- "+i.name+" "+fq(x.qty)+unitOf(i.unit,"ko")});
+  return tt("smsHead",{s:store,d:md(today())})+"\n"+rows.join("\n")+"\n"+tt("smsTail",{n:lines.length});
 }
+
+/* ---------- 클라우드 백업 (Supabase REST, 라이브러리 없음) ---------- */
+const CFG=window.OG_CONFIG||{};
+const cloudOn=!!(CFG.SUPABASE_URL&&CFG.SUPABASE_ANON_KEY);
+const SK="orderguard.session";
+let sess=null;try{sess=JSON.parse(localStorage.getItem(SK))}catch(e){}
+const cl={st:cloudOn?(sess?"in":"out"):"off",last:null,err:"",busy:false,again:false,dirty:false,email:"",code:"",msg:"",t:null};
+const cu=p=>CFG.SUPABASE_URL.replace(/\/$/,"")+p;
+function saveSess(x){sess=x;try{x?localStorage.setItem(SK,JSON.stringify(x)):localStorage.removeItem(SK)}catch(e){}}
+function takeSess(r){if(!r||!r.access_token)return false;saveSess({access_token:r.access_token,refresh_token:r.refresh_token||(sess&&sess.refresh_token),expires_at:Math.floor(Date.now()/1000)+(+r.expires_in||3600),user:r.user||(sess&&sess.user)||null});return true}
+async function errText(r){try{const j=await r.json();return j.msg||j.error_description||j.message||j.error||("HTTP "+r.status)}catch(e){return"HTTP "+r.status}}
+async function fresh(){
+  if(!sess||sess.expires_at-Math.floor(Date.now()/1000)>60)return;
+  const r=await fetch(cu("/auth/v1/token?grant_type=refresh_token"),{method:"POST",headers:{apikey:CFG.SUPABASE_ANON_KEY,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:sess.refresh_token})});
+  if(r.ok){takeSess(await r.json());return}
+  if(r.status===400||r.status===401){saveSess(null);cl.st="out"}
+  throw new Error(await errText(r));
+}
+async function sb(path,opts,noAuth){
+  opts=opts||{};const h=Object.assign({apikey:CFG.SUPABASE_ANON_KEY,"Content-Type":"application/json"},opts.headers||{});
+  if(!noAuth){await fresh();if(!sess)throw new Error("signed out");h.Authorization="Bearer "+sess.access_token}
+  return fetch(cu(path),Object.assign({},opts,{headers:h}));
+}
+const uidOf=()=>sess&&sess.user&&sess.user.id;
+async function cloudPull(){
+  const r=await sb("/rest/v1/app_state?select=data,rev,updated_at&user_id=eq."+encodeURIComponent(uidOf()));
+  if(!r.ok)throw new Error(await errText(r));
+  const a=await r.json();return a&&a[0]||null;
+}
+async function backupInsert(data){
+  const r=await sb("/rest/v1/app_backups",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify({user_id:uidOf(),data})});
+  if(!r.ok)throw new Error(await errText(r));
+}
+function cloudSoon(){if(cl.st!=="in")return;clearTimeout(cl.t);cl.t=setTimeout(cloudPush,3000)}
+async function cloudPush(){
+  if(cl.st!=="in")return;
+  if(cl.busy){cl.again=true;return}
+  cl.busy=true;cl.dirty=false;
+  try{
+    const r=await sb("/rest/v1/app_state?on_conflict=user_id",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({user_id:uidOf(),data:S,rev:S.rev||0,updated_at:new Date().toISOString()})});
+    if(!r.ok)throw new Error(await errText(r));
+    let snap="";try{snap=localStorage.getItem("orderguard.snap")||""}catch(e){}
+    if(snap!==today()){await backupInsert(S);try{localStorage.setItem("orderguard.snap",today())}catch(e){}}
+    cl.last=Date.now();cl.err="";
+  }catch(e){cl.err=String(e&&e.message||e);cl.dirty=true;setTimeout(cloudSoon,20000)}
+  cl.busy=false;
+  if(cl.again){cl.again=false;cloudSoon()}
+  render();
+}
+async function cloudInit(){
+  if(cl.st!=="in")return;
+  try{
+    const row=await cloudPull();
+    if(!row){await cloudPush();try{localStorage.setItem("orderguard.linked",uidOf())}catch(e){}return}
+    const rr=+row.rev||0,lr=S.rev||0;
+    let linked=false;try{linked=localStorage.getItem("orderguard.linked")===uidOf()}catch(e){}
+    if(rr>lr||!linked){try{await backupInsert(S)}catch(e){}S=migrate(row.data);S.rev=rr;try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}cl.last=Date.now();cl.err="";toast(t("cloudRestored"))}
+    else if(rr<lr){await cloudPush();try{localStorage.setItem("orderguard.linked",uidOf())}catch(e){}return}
+    else{cl.last=Date.now();cl.err=""}
+    try{localStorage.setItem("orderguard.linked",uidOf())}catch(e){}
+  }catch(e){cl.err=String(e&&e.message||e)}
+  render();
+}
+async function cloudBoot(){
+  if(!cloudOn)return;
+  try{
+    if(location.hash.indexOf("access_token=")>-1){ // 이메일 링크로 돌아온 경우
+      const p=new URLSearchParams(location.hash.slice(1));
+      saveSess({access_token:p.get("access_token"),refresh_token:p.get("refresh_token"),expires_at:Math.floor(Date.now()/1000)+(+p.get("expires_in")||3600),user:null});
+      const r=await fetch(cu("/auth/v1/user"),{headers:{apikey:CFG.SUPABASE_ANON_KEY,Authorization:"Bearer "+sess.access_token}});
+      if(r.ok){sess.user=await r.json();saveSess(sess);cl.st="in"}
+      try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}
+    }
+  }catch(e){}
+  await cloudInit();
+}
+async function cloudSend(){
+  const em=(cl.email||"").trim();if(!em){toast(t("needEmail"));return}
+  try{const r=await sb("/auth/v1/otp",{method:"POST",body:JSON.stringify({email:em,create_user:true})},true);if(!r.ok)throw new Error(await errText(r));cl.st="code";cl.msg="";toast(t("codeSent"))}
+  catch(e){cl.msg=t("failed")+": "+(e.message||e)}
+  render();
+}
+async function cloudVerify(){
+  try{
+    const r=await sb("/auth/v1/verify",{method:"POST",body:JSON.stringify({type:"email",email:(cl.email||"").trim(),token:(cl.code||"").trim()})},true);
+    if(!r.ok)throw new Error(await errText(r));
+    takeSess(await r.json());cl.st="in";cl.code="";cl.msg="";
+    await cloudInit();return;
+  }catch(e){cl.msg=t("failed")+": "+(e.message||e)}
+  render();
+}
+async function cloudRestore(){
+  try{const row=await cloudPull();if(!row){toast(t("cloudNone"));return}
+    try{await backupInsert(S)}catch(e){}
+    S=migrate(row.data);S.rev=row.rev||S.rev;try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}cl.last=Date.now();cl.err="";toast(t("cloudRestored"))}
+  catch(e){cl.err=String(e.message||e)}
+  render();
+}
+function statusText(){
+  if(dbDoc)return syncKey?t(syncKey):"";
+  if(!cloudOn)return t("sLocalOnly");
+  if(cl.st!=="in")return t("sCloudOff");
+  if(cl.err)return t("sCloudErr");
+  return cl.last?t("sCloudOk",{h:new Date(cl.last).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}):t("sCloudWait");
+}
+function cloudCard(){
+  let h='<div class="card"><b>'+t("cloudT")+'</b>';
+  if(!cloudOn)return h+'<div class="sub">'+t("cloudOffHelp")+'</div></div>';
+  if(cl.st==="in"){
+    h+='<div class="sub">'+t("cloudAs",{e:esc(sess&&sess.user&&sess.user.email||"")})+'</div><div class="sub">'+(cl.err?esc(t("sCloudErr")+" — "+cl.err):cl.last?t("cloudLast",{d:new Date(cl.last).toLocaleString()}):t("sCloudWait"))+'</div>'+
+     '<div class="row wrap" style="margin-top:8px"><button class="btn sm" data-act="cnow">'+t("cloudNow")+'</button><button class="btn sec sm" data-act="crestore">'+t("cloudRestore")+'</button><button class="btn sec sm" data-act="cout">'+t("cloudOut")+'</button></div>';
+  }else if(cl.st==="code"){
+    h+='<div class="sub">'+esc(cl.email)+'</div><label>'+t("cloudCode")+'</label><input type="text" inputmode="numeric" autocomplete="one-time-code" data-act="ccode" value="'+esc(cl.code)+'"><div class="row wrap" style="margin-top:8px"><button class="btn sm" data-act="cverify">'+t("cloudVerify")+'</button><button class="btn sec sm" data-act="cback">'+t("back")+'</button></div>';
+  }else{
+    h+='<div class="sub">'+t("cloudHelp")+'</div><label>'+t("cloudEmail")+'</label><input type="text" inputmode="email" autocomplete="email" data-act="cemail" value="'+esc(cl.email)+'"><div style="margin-top:8px"><button class="btn sm" data-act="csend">'+t("cloudSend")+'</button></div>';
+  }
+  if(cl.msg)h+='<div class="sub" style="color:var(--bad);margin-top:6px">'+esc(cl.msg)+'</div>';
+  return h+'</div>';
+}
+window.addEventListener("online",cloudSoon);
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&cl.st==="in"&&cl.dirty)cloudPush()});
+
 /* ---------- 화면 ---------- */
-function vendorChips(){
-  return '<div class="chips">'+S.vendors.map(v=>'<button class="chip '+(v.id===ui.vid?"on":"")+'" data-act="vid" data-id="'+v.id+'">'+esc(v.name)+'</button>').join("")+'</div>';
+const IC={
+ home:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg>',
+ doc:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>',
+ tag:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>',
+ lock:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+ box:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>',
+ chart:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+ gear:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+ back:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
+ chev:'<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>',
+ search:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
+ warn:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>'
+};
+const AVC=[["#e6f4f2","#0f766e"],["#e0e7ff","#3730a3"],["#fef3c7","#92400e"],["#fce7f3","#9d174d"],["#e0f2fe","#075985"],["#ede9fe","#5b21b6"],["#dcfce7","#166534"]];
+function avatar(v){const i=S.vendors.indexOf(v)%AVC.length,c=AVC[i<0?0:i];const n=nameOf(v).trim();return'<div class="av" style="background:'+c[0]+';color:'+c[1]+'">'+esc((n[0]||"?").toUpperCase())+'</div>'}
+function draftLines(v){const d=draftOf(v.id);return v.items.filter(i=>(+d[i.id]||0)>0).map(i=>({itemId:i.id,qty:+d[i.id]}))}
+const DOW=()=>t("dayFull");
+const nowMin=()=>{const d=new Date();return d.getHours()*60+d.getMinutes()};
+const cutMin=v=>{const p=(v.cutoff||"09:00").split(":");return (+p[0])*60+(+p[1]||0)};
+const hasOrderToday=v=>S.orders.some(o=>o.vendorId===v.id&&o.date===today());
+const dueToday=v=>(v.days||[]).includes(new Date().getDay())&&!hasOrderToday(v);
+const dueLate=v=>dueToday(v)&&nowMin()>cutMin(v);
+function nextDue(v){const ds=v.days||[];if(!ds.length)return null;const d0=new Date().getDay();for(let k=1;k<=7;k++){const d=(d0+k)%7;if(ds.includes(d))return{d,k}}return null}
+function dueList(){return S.vendors.filter(dueToday).sort((a,b)=>cutMin(a)-cutMin(b))}
+function icsEsc(x){return String(x).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n")}
+function buildIcs(){
+  const code=["SU","MO","TU","WE","TH","FR","SA"],lead=+S.lead||30,now=new Date();
+  const z=n=>String(n).padStart(2,"0"),stamp=now.getUTCFullYear()+z(now.getUTCMonth()+1)+z(now.getUTCDate())+"T"+z(now.getUTCHours())+z(now.getUTCMinutes())+z(now.getUTCSeconds())+"Z";
+  const out=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Solverian//Order Guard//EN","CALSCALE:GREGORIAN"];
+  let n=0;
+  S.vendors.forEach(v=>{
+    const ds=(v.days||[]).slice().sort();if(!ds.length)return;n++;
+    const first=new Date();first.setHours(0,0,0,0);
+    for(let k=0;k<7;k++){const c=new Date(first);c.setDate(c.getDate()+k);if(ds.includes(c.getDay())){first.setTime(c.getTime());break}}
+    const m=cutMin(v),ds0=first.getFullYear()+z(first.getMonth()+1)+z(first.getDate());
+    const st=ds0+"T"+z(Math.floor(m/60))+z(m%60)+"00",en=ds0+"T"+z(Math.floor((m+15)/60)%24)+z((m+15)%60)+"00";
+    out.push("BEGIN:VEVENT","UID:og-"+v.id+"@orderguard","DTSTAMP:"+stamp,"DTSTART:"+st,"DTEND:"+en,"RRULE:FREQ=WEEKLY;BYDAY="+ds.map(d=>code[d]).join(","),
+      "SUMMARY:"+icsEsc(t("icsTitle",{v:nameOf(v)})),"DESCRIPTION:"+icsEsc(t("icsDesc")),"BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:"+icsEsc(t("icsTitle",{v:nameOf(v)})),"TRIGGER:-PT"+lead+"M","END:VALARM","END:VEVENT");
+  });
+  out.push("END:VCALENDAR");
+  return n?out.join("\r\n")+"\r\n":"";
+}
+function vStatus(v){
+  const dl=draftLines(v).length;
+  const pend=S.orders.filter(o=>o.vendorId===v.id&&o.status==="sent").sort((a,b)=>b.date.localeCompare(a.date))[0];
+  const last=vOrders(v.id)[0];
+  if(dl)return{k:"draft",p:t("stDraft",{n:dl})};
+  if(pend)return{k:"sent",p:t("stSent")};
+  if(last&&last.date===today())return{k:"ok",p:t("stDone")};
+  if(dueToday(v))return{k:dueLate(v)?"bad":"draft",p:dueLate(v)?t("dueLate"):t("dueT")};
+  return{k:"",p:t("stNone")};
+}
+function vendorChips(){return'<div class="chips">'+S.vendors.map(v=>'<button class="chip '+(v.id===ui.vid?"on":"")+'" data-act="vid" data-id="'+v.id+'">'+esc(nameOf(v))+'</button>').join("")+'</div>'}
+function screenHead(title,sub,right){return'<div class="sh"><button class="iconbtn" data-act="home" aria-label="back">'+IC.back+'</button><div class="tt"><b>'+esc(title)+'</b>'+(sub?'<span class="cap">'+esc(sub)+'</span>':'')+'</div>'+(right||"")+'</div>'}
+function viewSoon(k){
+  const T0=k==="inv"?"invT":"priceT",L=k==="inv"?"invLead":"priceLead",F=t(k==="inv"?"invF":"priceF"),on=!!(S.interest&&S.interest[k]);
+  return'<div class="h1" style="margin-top:12px">'+t(T0)+'</div><div class="card" style="text-align:center;padding:22px 16px"><span class="pill draft" style="font-size:12px">'+t("soon")+'</span><div style="font-weight:700;font-size:17px;margin:12px 0 4px">'+t(L)+'</div><div class="sub">'+t("soonNote")+'</div></div>'+
+   '<div class="card flush">'+F.map(x=>'<div class="fl" style="display:flex;gap:10px;align-items:flex-start;opacity:.85"><span style="color:var(--pri)">'+IC.lock+'</span><span>'+esc(x)+'</span></div>').join("")+'</div>'+
+   '<button class="btn'+(on?" sec":"")+'" style="width:100%" data-act="want" data-id="'+k+'">'+(on?"✓ "+t("wantOn"):t("wantIt"))+'</button>';
+}
+function dueCard(){
+  const any=S.vendors.some(v=>(v.days||[]).length);
+  if(!any)return'<div class="card" style="display:flex;gap:10px;align-items:center;justify-content:space-between"><span class="sub" style="margin:0">'+t("dueHint")+'</span><button class="btn sm" style="white-space:nowrap;flex:none" data-act="tab" data-id="set">'+t("dueGo")+'</button></div>';
+  const L=dueList();
+  if(!L.length){const nx=S.vendors.map(v=>({v,n:nextDue(v)})).filter(x=>x.n).sort((a,b)=>a.n.k-b.n.k||cutMin(a.v)-cutMin(b.v))[0];
+    return'<div class="card"><b>'+t("dueNone")+'</b>'+(nx?'<div class="sub">'+esc(nameOf(nx.v))+' · '+esc(t("dueNext",{d:DOW()[nx.n.d],t:nx.v.cutoff}))+'</div>':'')+'</div>'}
+  return'<div class="sec" style="margin-top:6px">'+t("dueT")+' · '+L.length+'</div><div class="card flush">'+L.map(v=>'<button class="vrow" data-act="open" data-id="'+v.id+'">'+avatar(v)+'<div class="vt"><b>'+esc(nameOf(v))+'</b><span style="color:'+(dueLate(v)?"var(--bad)":"inherit")+'">'+(dueLate(v)?t("dueLate")+' · ':'')+t("dueAt",{t:v.cutoff})+'</span></div><span class="pill '+(dueLate(v)?"bad":"draft")+'">'+t("dueOpen")+'</span>'+IC.chev+'</button>').join("")+'</div>';
+}
+function viewHome(){
+  const drafts=S.vendors.filter(v=>draftLines(v).length).length;
+  const pend=S.orders.filter(o=>o.status==="sent").length;
+  const s=stats();
+  const d=new Date(),dl=d.toLocaleDateString(lang()==="ko"?"ko-KR":"en-US",{weekday:"long",month:"long",day:"numeric"});
+  let h='<div class="cap" style="margin-top:6px">'+esc(dl)+'</div><div class="h1">'+t("homeT")+'</div>';
+  h+=dueCard();
+  h+='<div class="sum"><div><b>'+drafts+'</b><span>'+t("sumDraft")+'</span></div><div><b>'+pend+'</b><span>'+t("sumWait")+'</span></div><div><b style="color:'+(s.runs?"var(--bad)":"inherit")+'">'+s.runs+'</b><span>'+t("sumRuns")+'</span></div></div>';
+  h+='<div class="sec">'+t("vendors")+'</div><div class="card flush">'+S.vendors.map(v=>{
+    const st=vStatus(v),last=vOrders(v.id)[0];
+    return'<button class="vrow" data-act="open" data-id="'+v.id+'">'+avatar(v)+'<div class="vt"><b>'+esc(nameOf(v))+'</b><span>'+(last?esc(t("lastOn",{d:md(last.date)})):t("noHist"))+' · '+t("items",{n:v.items.length})+'</span></div>'+(st.k?'<span class="pill '+st.k+'">'+esc(st.p)+'</span>':'')+IC.chev+'</button>';
+  }).join("")+'</div>';
+  return h;
 }
 function viewOrder(){
-  const v=V(ui.vid);const d=draftOf(v.id);const f=freq(v.id);
-  const lines=v.items.map(i=>({itemId:i.id,qty:+d[i.id]||0})).filter(l=>l.qty>0);
-  const missing=v.items.filter(i=>(f.m[i.id]||0)>=(f.n<=2?f.n:Math.ceil(f.n/2))&&f.n>0&&!(+d[i.id]>0));
-  let h=vendorChips();
-  h+='<div class="card"><div class="row sp"><b>'+esc(v.name)+' 주문서</b><div class="row"><button class="btn sec sm" data-act="loadlast">지난 주문 불러오기</button></div></div>';
-  if(!v.items.length)h+='<div class="empty">등록된 품목이 없습니다. 설정 탭에서 품목을 추가하세요.</div>';
-  if(missing.length&&lines.length)h+='<div class="hint"><b>빠진 것 아닌가요?</b> 최근 주문에 자주 있었는데 이번엔 없는 품목: '+missing.map(i=>'<a href="#" data-act="addmiss" data-id="'+i.id+'">'+esc(i.name)+'</a> ('+f.m[i.id]+'/'+f.n+'회)').join(", ")+'</div>';
-  h+=v.items.map(i=>{
-    const q=+d[i.id]||0,lq=lastQty(v.id,i.id),fr=f.m[i.id]||0;
-    return '<div class="item"><div class="nm"><b>'+esc(i.name)+'</b><div class="meta">'+(lq?'지난번 '+fmtQty(lq)+i.unit:'주문 이력 없음')+(fr&&f.n?' · '+fr+'/'+f.n+'회 주문':'')+(i.price?' · $'+i.price:'')+'</div></div>'+
-      '<div class="step"><button data-act="dec" data-id="'+i.id+'">−</button><input type="number" inputmode="decimal" min="0" step="any" value="'+(q||"")+'" placeholder="0" data-act="qty" data-id="'+i.id+'"><button data-act="inc" data-id="'+i.id+'">＋</button></div></div>';
-  }).join("");
-  h+='</div>';
-  if(lines.length){
-    const sms=buildSms(v,lines);
-    h+='<div class="card"><b>문자 미리보기 ('+lines.length+'개 품목)</b><textarea id="smsbox">'+esc(sms)+'</textarea>'+
-      '<div class="row" style="margin-top:8px;flex-wrap:wrap"><button class="btn" data-act="copy">복사</button>'+
-      '<a class="btn sec" href="sms:'+esc(v.phone)+'?&body='+encodeURIComponent(sms)+'">문자앱 열기</a>'+(v.phone?'':'<div class="sub" style="width:100%">전화번호가 없으면 문자앱에서 받는 사람을 직접 고르세요. (설정 탭에서 번호를 넣으면 자동 입력)</div>')+
-      '</div><div class="row" style="margin-top:8px"><button class="btn sec" data-act="sent">주문 보냈음 — 입고 대기로 저장</button></div></div>';
-  }
+  const v=V(ui.vid),d=draftOf(v.id),f=freq(v.id),q=i=>+d[i.id]||0;
+  const on=v.items.filter(i=>q(i)>0).length,off=v.items.length-on;
+  const need=f.n<=2?f.n:Math.ceil(f.n/2);
+  const missing=v.items.filter(i=>f.n>0&&(f.m[i.id]||0)>=need&&!(q(i)>0));
+  const qs=(ui.q||"").trim().toLowerCase();
+  const shown=v.items.filter(i=>(ui.filter==="all"||(ui.filter==="on"?q(i)>0:q(i)===0))&&(!qs||(i.name+" "+(i.en||"")).toLowerCase().includes(qs)));
+  let h=screenHead(nameOf(v),t("orderGuide"),'<button class="btn ghost sm" data-act="loadlast">'+t("loadLast")+'</button>');
+  if(!v.items.length)return h+'<div class="card empty">'+t("noItems")+'</div>';
+  h+='<div class="search">'+IC.search+'<input type="search" placeholder="'+esc(t("search"))+'" value="'+esc(ui.q||"")+'" data-act="srch" data-id="s"></div>';
+  h+='<div class="seg">'+[["all",t("all")+" "+v.items.length],["on",t("ordered")+" "+on],["off",t("notOrdered")+" "+off]].map(x=>'<button class="'+(ui.filter===x[0]?"on":"")+'" data-act="flt" data-id="'+x[0]+'">'+esc(x[1])+'</button>').join("")+'</div>';
+  if(missing.length&&on)h+='<div class="banner">'+IC.warn+'<div><b>'+t("hintT")+'</b> '+t("hintB")+' '+missing.map(i=>'<a href="#" data-act="addmiss" data-id="'+i.id+'">'+esc(nameOf(i))+'</a>').join(", ")+'</div></div>';
+  h+='<div class="card flush"><div class="gi hdr"><span></span><span>'+t("colItem")+'</span><span>'+t("colLast")+'</span><span>'+t("colQty")+'</span></div>';
+  h+=shown.length?shown.map(i=>{const qq=q(i),lq=lastQty(v.id,i.id);
+    return'<div class="gi '+(qq>0?"on":"off")+'"><label class="ckw"><input type="checkbox" class="ck" data-act="tog" data-id="'+i.id+'"'+(qq>0?" checked":"")+'></label><div class="n1">'+esc(nameOf(i))+'</div><div class="lq">'+(lq?esc(fq(lq)+" "+unitOf(i.unit)):"–")+'</div><input class="qn" type="number" inputmode="decimal" min="0" step="any" value="'+(qq||"")+'" placeholder="0" data-act="qty" data-id="'+i.id+'"></div>'}).join(""):'<div class="empty">'+t("noMatch")+'</div>';
+  return h+'</div>';
+}
+function viewReview(){
+  const v=V(ui.vid),lines=draftLines(v);
+  if(!lines.length){ui.sub="vendor";return viewOrder()}
+  const sms=buildSms(v,lines);
+  let h=screenHead(t("reviewT"),nameOf(v),'');
+  h+='<div class="sec">'+t("items",{n:lines.length})+'</div><div class="card flush">'+lines.map(l=>{const i=itemOf(v,l.itemId);return'<div class="rl"><span>'+esc(nameOf(i))+'</span><span>'+esc(fq(l.qty)+" "+unitOf(i.unit))+'</span></div>'}).join("")+'</div>';
+  h+='<div class="sec">'+t("msgT")+'</div><div class="card"><div class="cap" style="margin-bottom:6px">'+esc(t("toV",{v:v.phone||t("noNumber")}))+'</div><div class="msg">'+esc(sms)+'</div><textarea id="smsbox" style="position:absolute;left:-9999px" aria-hidden="true">'+esc(sms)+'</textarea></div>';
+  h+='<div class="card"><ol class="steps"><li><div>'+t("step1")+'</div><a class="btn sm" href="sms:'+esc(v.phone)+'?&body='+encodeURIComponent(sms)+'">'+t("openSms")+'</a></li><li><div>'+t("step1b")+'</div><button class="btn sec sm" data-act="copy">'+t("copy")+'</button></li><li><div>'+t("step2")+'</div><button class="btn sm" data-act="sent">'+t("markSentShort")+'</button></li></ol>'+(v.phone?'':'<div class="sub" style="margin-top:8px">'+t("noPhone")+'</div>')+'</div>';
   return h;
 }
 function viewReceive(){
-  const open=S.orders.filter(o=>o.status==="sent").sort((a,b)=>b.date.localeCompare(a.date));
   if(ui.rcv){
-    const o=S.orders.find(x=>x.id===ui.rcv.id);const v=V(o.vendorId);
-    let h='<div class="card"><div class="row sp"><b>'+esc(v.name)+' · '+md(o.date)+' 주문 입고 확인</b><button class="btn sec sm" data-act="rcvback">뒤로</button></div><div class="sub">받은 수량을 확인하세요. 주문 수량과 다르면 부족으로 기록됩니다.</div>';
-    h+=o.lines.map(l=>{const i=itemOf(v,l.itemId);const g=ui.rcv.got[l.itemId];
-      return '<div class="item"><div class="nm"><b>'+esc(i.name)+'</b><div class="meta">주문 '+fmtQty(l.qty)+i.unit+'</div></div><div class="step"><input type="number" inputmode="decimal" min="0" step="any" value="'+g+'" data-act="got" data-id="'+l.itemId+'"></div>'+(g<l.qty?'<span class="tag bad">부족 '+fmtQty(l.qty-g)+'</span>':'<span class="tag ok">OK</span>')+'</div>'}).join("");
-    h+='<div class="row" style="margin-top:10px"><button class="btn" data-act="rcvsave">입고 확인 저장</button></div></div>';
-    return h;
+    const o=S.orders.find(x=>x.id===ui.rcv.id),v=V(o.vendorId);
+    const short=o.lines.filter(l=>(+ui.rcv.got[l.itemId]||0)<l.qty).length;
+    let h='<div class="sh"><button class="iconbtn" data-act="rcvback">'+IC.back+'</button><div class="tt"><b>'+esc(nameOf(v))+'</b><span class="cap">'+esc(t("rcvSub",{d:md(o.date)}))+'</span></div>'+(short?'<span class="pill bad">'+t("shortN",{n:short})+'</span>':'<span class="pill ok">'+t("allGood")+'</span>')+'</div><div class="cap" style="margin:0 2px 8px">'+t("rcvHelp")+'</div>';
+    h+='<div class="card flush"><div class="gi hdr"><span></span><span>'+t("colItem")+'</span><span>'+t("colOrdered")+'</span><span>'+t("colGot")+'</span></div>';
+    h+=o.lines.map(l=>{const i=itemOf(v,l.itemId),g=+ui.rcv.got[l.itemId]||0,full=g>=l.qty;
+      return'<div class="gi '+(full?"on":"off")+'"><label class="ckw"><input type="checkbox" class="ck" data-act="gotchk" data-id="'+l.itemId+'"'+(full?" checked":"")+'></label><div class="n1">'+esc(nameOf(i))+'</div><div class="lq">'+esc(fq(l.qty)+" "+unitOf(i.unit))+'</div><input class="qn" type="number" inputmode="decimal" min="0" step="any" value="'+g+'" data-act="got" data-id="'+l.itemId+'"></div>'}).join("");
+    return h+'</div>';
   }
-  let h='<h2>입고 대기 주문</h2>';
-  if(!open.length)h+='<div class="card empty">입고 대기 중인 주문이 없습니다. 발주 탭에서 주문을 "보냈음"으로 저장하면 여기에 나타납니다.</div>';
-  h+=open.map(o=>'<div class="card row sp"><div><b>'+esc(V(o.vendorId).name)+'</b><div class="meta sub">'+md(o.date)+' · '+o.lines.length+'개 품목</div></div><button class="btn sm" data-act="rcvopen" data-id="'+o.id+'">입고 확인</button></div>').join("");
+  const open=S.orders.filter(o=>o.status==="sent").sort((a,b)=>b.date.localeCompare(a.date));
+  let h='<div class="h1" style="margin-top:12px">'+t("tabRecv")+'</div><div class="cap">'+t("recvSub")+'</div><div class="sec">'+t("pendTitle")+'</div>';
+  h+=open.length?'<div class="card flush">'+open.map(o=>{const v=V(o.vendorId);return'<button class="vrow" data-act="rcvopen" data-id="'+o.id+'">'+avatar(v)+'<div class="vt"><b>'+esc(nameOf(v))+'</b><span>'+md(o.date)+' · '+t("items",{n:o.lines.length})+'</span></div><span class="pill sent">'+t("checkBtn")+'</span>'+IC.chev+'</button>'}).join("")+'</div>':'<div class="card empty">'+t("pendNone")+'</div>';
   const done=S.orders.filter(o=>o.status==="received"&&o.received).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
-  if(done.length){h+='<h2>최근 입고 결과</h2>'+done.map(o=>'<div class="card row sp"><div><b>'+esc(V(o.vendorId).name)+'</b> <span class="sub">'+md(o.date)+'</span></div>'+(o.shorts.length?'<span class="tag bad">부족 '+o.shorts.length+'건</span>':'<span class="tag ok">이상 없음</span>')+'</div>').join("")}
+  if(done.length)h+='<div class="sec">'+t("recentRcv")+'</div><div class="card flush">'+done.map(o=>{const v=V(o.vendorId);return'<div class="vrow">'+avatar(v)+'<div class="vt"><b>'+esc(nameOf(v))+'</b><span>'+md(o.date)+'</span></div>'+(o.shorts.length?'<span class="pill bad">'+t("shortN",{n:o.shorts.length})+'</span>':'<span class="pill ok">'+t("allGood")+'</span>')+'</div>'}).join("")+'</div>';
   return h;
 }
+function dispName(id,fallback){for(const v of S.vendors){const i=v.items.find(x=>x.id===id);if(i)return nameOf(i)}return fallback}
 function stats(){
   const cut=new Date();cut.setDate(cut.getDate()-30);const c=cut.toISOString().slice(0,10);
-  const os=S.orders.filter(o=>o.date>=c);
-  const rcv=S.orders.filter(o=>o.received&&o.date>=c);
-  const shorts=rcv.reduce((a,o)=>a+o.shorts.length,0);
-  const runs=S.runs.filter(r=>r.date>=c);
-  const amt=runs.reduce((a,r)=>a+(+r.amount||0),0);
-  const miss={};
-  rcv.forEach(o=>o.shorts.forEach(s=>{miss[s.name]=(miss[s.name]||0)+1}));
+  const os=S.orders.filter(o=>o.date>=c),rcv=S.orders.filter(o=>o.received&&o.date>=c),runs=S.runs.filter(r=>r.date>=c);
+  const shorts=rcv.reduce((a,o)=>a+o.shorts.length,0),amt=runs.reduce((a,r)=>a+(+r.amount||0),0),miss={};
+  rcv.forEach(o=>o.shorts.forEach(s=>{const n=dispName(s.itemId,s.name);miss[n]=(miss[n]||0)+1}));
   runs.forEach(r=>{miss[r.item]=(miss[r.item]||0)+1});
-  const top=Object.entries(miss).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  return {orders:os.length,shorts,runs:runs.length,amt,top};
+  return{orders:os.length,shorts,runs:runs.length,amt,top:Object.entries(miss).sort((a,b)=>b[1]-a[1]).slice(0,5)};
 }
+const REASONS=["forgot","notdelivered","short","busy","other"];
 function viewLog(){
-  const s=stats();const all=[...new Set(S.vendors.flatMap(v=>v.items.map(i=>i.name)))];
-  let h='<h2>최근 30일</h2><div class="kpi"><div><b>'+s.orders+'</b><span>주문 건수</span></div><div><b>'+s.shorts+'</b><span>입고 부족 품목</span></div><div><b>'+s.runs+'</b><span>급히 장 보러 간 횟수</span></div><div><b>$'+Math.round(s.amt)+'</b><span>긴급 구매 금액</span></div></div>';
-  h+='<div class="card"><b>자주 놓치는 품목</b>'+(s.top.length?s.top.map(t=>'<div class="item"><div class="nm">'+esc(t[0])+'</div><span class="tag bad">'+t[1]+'회</span></div>').join(""):'<div class="empty">아직 기록이 없습니다. 장 보러 간 일을 아래에 기록해 보세요.</div>')+'</div>';
-  h+='<div class="card"><b>급히 장 보러 갔나요? 기록하기</b><label>품목</label><input type="text" id="rn_item" list="rn_list" placeholder="예: 대파"><datalist id="rn_list">'+all.map(a=>'<option value="'+esc(a)+'">').join("")+'</datalist>'+
-   '<label>이유</label><select id="rn_why"><option>주문에서 빠뜨림</option><option>입고 때 안 왔음</option><option>수량이 모자람</option><option>갑자기 많이 팔림</option><option>기타</option></select>'+
-   '<label>금액 ($, 모르면 비워두세요)</label><input type="number" id="rn_amt" inputmode="decimal" placeholder="0"><div style="margin-top:10px"><button class="btn" data-act="runadd">기록 저장</button></div></div>';
+  const s=stats(),all=[...new Set(S.vendors.flatMap(v=>v.items.map(i=>nameOf(i))))],mx=s.top.length?s.top[0][1]:1;
+  let h='<div class="h1" style="margin-top:12px">'+t("tabLog")+'</div><div class="cap">'+t("last30")+'</div>';
+  h+='<div class="kpi"><div><b>'+s.orders+'</b><span>'+t("kOrders")+'</span></div><div class="'+(s.shorts?"alert":"")+'"><b>'+s.shorts+'</b><span>'+t("kShort")+'</span></div><div class="'+(s.runs?"alert":"")+'"><b>'+s.runs+'</b><span>'+t("kRuns")+'</span></div><div class="'+(s.amt?"alert":"")+'"><b>$'+Math.round(s.amt)+'</b><span>'+t("kAmt")+'</span></div></div>';
+  h+='<div class="sec">'+t("topMiss")+'</div><div class="card">'+(s.top.length?s.top.map(x=>'<div style="margin:6px 0 10px"><div class="row sp"><span class="n1">'+esc(x[0])+'</span><span class="cap">'+x[1]+'×</span></div><div class="bar2"><i style="width:'+Math.round(x[1]/mx*100)+'%"></i></div></div>').join(""):'<div class="empty">'+t("noTop")+'</div>')+'</div>';
+  h+='<div class="sec">'+t("logRun")+'</div><div class="card"><label class="lbl" style="margin-top:0">'+t("item")+'</label><input class="inp" type="text" id="rn_item" list="rn_list" placeholder="'+esc(t("itemPh"))+'"><datalist id="rn_list">'+all.map(a=>'<option value="'+esc(a)+'">').join("")+'</datalist>'+
+    '<div class="row" style="gap:10px"><div style="flex:1.4"><label class="lbl">'+t("why")+'</label><select class="inp" id="rn_why">'+REASONS.map(r=>'<option value="'+r+'">'+t("r_"+r)+'</option>').join("")+'</select></div><div style="flex:1"><label class="lbl">'+t("amtShort")+'</label><input class="inp" type="number" id="rn_amt" inputmode="decimal" placeholder="$0"></div></div>'+
+    '<button class="btn full" style="margin-top:12px" data-act="runadd">'+t("saveRun")+'</button></div>';
   const rs=[...S.runs].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,10);
-  if(rs.length)h+='<h2>긴급 구매 기록</h2><div class="card">'+rs.map(r=>'<div class="item"><div class="nm"><b>'+esc(r.item)+'</b><div class="meta">'+md(r.date)+' · '+esc(r.why)+(r.amount?' · $'+r.amount:'')+'</div></div><button class="btn sec sm" data-act="rundel" data-id="'+r.id+'">삭제</button></div>').join("")+'</div>';
+  if(rs.length)h+='<div class="sec">'+t("runs")+'</div><div class="card flush">'+rs.map(r=>{const why=T.en["r_"+r.why]?t("r_"+r.why):r.why;return'<div class="vrow"><div class="vt"><b>'+esc(r.item)+'</b><span>'+md(r.date)+' · '+esc(why)+(r.amount?' · $'+r.amount:'')+'</span></div><button class="x" data-act="rundel" data-id="'+r.id+'" aria-label="delete">×</button></div>'}).join("")+'</div>';
   return h;
 }
 function viewSettings(){
   const v=V(ui.vid);
-  let h='<div class="card"><label>매장 이름 (문자 맨 앞에 들어갑니다)</label><input type="text" data-act="store" value="'+esc(S.store)+'"></div>'+vendorChips()+
-   '<div class="row" style="margin-bottom:6px"><button class="btn sec sm" data-act="addvendor">+ 거래처 추가</button></div>';
-  h+='<div class="card"><label>거래처 이름</label><input type="text" data-act="vname" value="'+esc(v.name)+'"><label>문자 받을 전화번호</label><input type="text" inputmode="tel" data-act="vphone" value="'+esc(v.phone)+'" placeholder="예: 2015551234">'+
-   '<h2>품목 ('+v.items.length+')</h2>'+v.items.map(i=>'<div class="item"><div class="nm"><input type="text" data-act="iname" data-id="'+i.id+'" value="'+esc(i.name)+'"></div><input type="text" style="width:64px" data-act="iunit" data-id="'+i.id+'" value="'+esc(i.unit)+'"><button class="btn sec sm" data-act="idel" data-id="'+i.id+'">삭제</button></div>').join("")+
-   '<div class="row" style="margin-top:10px"><input type="text" id="newitem" placeholder="새 품목 이름"><button class="btn sm" data-act="iadd">추가</button></div>'+
-   '<div style="margin-top:12px"><button class="btn sec sm" data-act="vdel">이 거래처 삭제</button></div></div>';
-  h+='<div class="card"><b>백업</b><div class="sub">데이터를 텍스트로 복사해 보관하거나 다른 곳에 붙여넣어 복원할 수 있습니다.</div><textarea id="bk" style="min-height:70px"></textarea><div class="row" style="margin-top:8px"><button class="btn sec sm" data-act="bkout">내보내기</button><button class="btn sec sm" data-act="bkin">가져오기</button><button class="btn sec sm" data-act="reset">처음 상태로</button></div></div>';
-  return h;
+  let h='<div class="h1" style="margin-top:12px">'+t("tabSet")+'</div>';
+  h+='<div class="sec">'+t("gGeneral")+'</div><div class="card flush"><div class="fl"><label>'+t("langLabel")+'</label><select data-act="langsel"><option value="en"'+(lang()==="en"?" selected":"")+'>English</option><option value="ko"'+(lang()==="ko"?" selected":"")+'>한국어</option></select></div>'+
+   '<div class="fl"><label>'+t("storeName")+'</label><input type="text" data-act="store" value="'+esc(S.store)+'"></div><div class="fl"><label>'+t("storeEn")+'</label><input type="text" data-act="storeEn" value="'+esc(S.storeEn)+'"></div></div>';
+  h+='<div class="sec row sp" style="text-transform:none"><span style="text-transform:uppercase">'+t("gVendors")+'</span><button class="btn ghost sm" data-act="addvendor">'+t("addVendor")+'</button></div>'+vendorChips();
+  h+='<div class="card flush"><div class="fl"><label>'+t("vendorName")+'</label><input type="text" data-act="vname" value="'+esc(v.name)+'"></div><div class="fl"><label>'+t("vendorEn")+'</label><input type="text" data-act="vnameEn" value="'+esc(v.en||"")+'"></div>'+
+   '<div class="fl"><label>'+t("phone")+'</label><input type="text" inputmode="tel" data-act="vphone" value="'+esc(v.phone)+'" placeholder="2015551234"></div>'+
+   '<div class="fl"><label>'+t("smsLang")+'</label><select data-act="vsms"><option value="ko"'+(v.smsLang==="ko"?" selected":"")+'>'+t("smsKo")+'</option><option value="en"'+(v.smsLang==="en"?" selected":"")+'>'+t("smsEn")+'</option></select></div></div>';
+  h+='<div class="sec">'+t("schedT")+'</div><div class="card"><div class="cap" style="margin-bottom:6px">'+t("schedDays")+'</div><div class="chips" style="flex-wrap:wrap">'+DOW().map((n,i)=>'<button class="chip '+((v.days||[]).includes(i)?"on":"")+'" data-act="dow" data-id="'+i+'">'+n+'</button>').join("")+'</div>'+
+   '<div class="fl" style="padding:10px 0 0"><label>'+t("schedCut")+'</label><input type="time" data-act="vcut" value="'+esc(v.cutoff||"09:00")+'"></div>'+
+   '<div class="fl" style="padding:10px 0 0"><label>'+t("schedLead")+'</label><select data-act="lead">'+[15,30,60,120].map(m=>'<option value="'+m+'"'+((+S.lead||30)===m?" selected":"")+'>'+(m<60?t("min",{n:m}):t("hr",{n:m/60}))+'</option>').join("")+'</select></div>'+
+   '<button class="btn sm" style="margin-top:12px" data-act="ics">'+t("icsBtn")+'</button><div class="sub" style="margin-top:8px">'+t("schedNote")+'</div></div>';
+  h+='<div class="sec">'+t("itemsN",{n:v.items.length})+'</div><div class="card flush"><div class="irow gi hdr" style="display:grid"><span>'+t("nameMain")+'</span><span>'+t("nameEn")+'</span><span>'+t("unit")+'</span><span></span></div>'+v.items.map(i=>'<div class="irow"><input type="text" data-act="iname" data-id="'+i.id+'" value="'+esc(i.name)+'"><input type="text" data-act="ien" data-id="'+i.id+'" value="'+esc(i.en||"")+'"><input type="text" data-act="iunit" data-id="'+i.id+'" value="'+esc(i.unit)+'"><button class="x" data-act="idel" data-id="'+i.id+'" aria-label="delete">×</button></div>').join("")+
+   '<div class="row" style="padding:10px 14px"><input class="inp" type="text" id="newitem" placeholder="'+esc(t("newItem"))+'"><button class="btn sm" data-act="iadd">'+t("add")+'</button></div></div>'+
+   '<button class="btn danger sm" data-act="vdel">'+t("delVendor")+'</button>';
+  h+='<div class="sec">'+t("gData")+'</div>'+cloudCard();
+  h+='<div class="card"><b>'+t("backup")+'</b><div class="sub">'+t("backupHelp")+'</div><textarea id="bk" style="min-height:70px;margin-top:8px"></textarea><div class="row wrap" style="margin-top:8px"><button class="btn sec sm" data-act="bkout">'+t("export")+'</button><button class="btn sec sm" data-act="bkin">'+t("import")+'</button><button class="btn danger sm" data-act="reset">'+t("reset")+'</button></div></div>';
+  return h+'<div class="sub" style="text-align:center;margin:16px 0">'+t("version",{v:APP_VERSION})+'</div>';
 }
 function render(){
-  const act=document.activeElement;const keep=act&&act.dataset&&act.dataset.id&&act.dataset.act?{a:act.dataset.act,i:act.dataset.id,s:act.selectionStart}:null;
-  $("#store").textContent=S?S.store:"";
-  const tabs=[["order","📝","발주"],["recv","📦","입고"],["log","📊","기록"],["set","⚙️","설정"]];
-  $("#nav").innerHTML=tabs.map(t=>'<button class="'+(ui.tab===t[0]?"on":"")+'" data-act="tab" data-id="'+t[0]+'"><i>'+t[1]+'</i>'+t[2]+'</button>').join("");
-  if(!S){$("#app").innerHTML='<div class="empty">불러오는 중…</div>';return}
+  const act=document.activeElement,keep=act&&act.dataset&&act.dataset.id&&act.dataset.act?{a:act.dataset.act,i:act.dataset.id,s:act.selectionStart}:null;
+  document.documentElement.lang=lang();document.title=t("title");
+  $("#ttl").textContent=S?(lang()==="en"?(S.storeEn||S.store):S.store):t("title");
+  const stx=statusText(),cls=/fail|실패/i.test(stx)?"err":/Backed|백업됨|Saved|저장됨|connected|연결/i.test(stx)&&!/only|에만/.test(stx)?"ok":"";
+  $("#sync").innerHTML='<span class="dot '+cls+'"></span>'+esc(stx);
+  $("#langs").innerHTML=["en","ko"].map(l=>'<button class="'+(lang()===l?"on":"")+'" data-act="lang" data-id="'+l+'">'+(l==="en"?"EN":"한")+'</button>').join("");
+  $("#updt").textContent=t("newVer");$("#updb").textContent=t("reload");
+  const pend=S?S.orders.filter(o=>o.status==="sent").length:0;
+  const dn=S?dueList().length:0;
+  const tabs=[["order",IC.home,"tabOrder",dn],["recv",IC.box,"tabRecv",pend],["inv",IC.doc,"tabInv",0,1],["price",IC.tag,"tabPrice",0,1],["log",IC.chart,"tabLog",0],["set",IC.gear,"tabSet",0]];
+  $("#nav").innerHTML=tabs.map(x=>'<button class="'+(ui.tab===x[0]?"on":"")+'" data-act="tab" data-id="'+x[0]+'">'+x[1]+(x[3]?'<span class="bd">'+x[3]+'</span>':'')+(x[4]?'<span class="soon">'+t("soonTag")+'</span>':'')+t(x[2])+'</button>').join("");
+  if(!S){$("#app").innerHTML='<div class="empty">'+t("loading")+'</div>';return}
   if(!ui.vid||!V(ui.vid))ui.vid=S.vendors[0]&&S.vendors[0].id;
-  $("#app").innerHTML=ui.tab==="order"?viewOrder():ui.tab==="recv"?viewReceive():ui.tab==="log"?viewLog():viewSettings();
-  if(keep){const e=document.querySelector('[data-act="'+keep.a+'"][data-id="'+keep.i+'"]');if(e&&e.focus){e.focus();try{e.setSelectionRange(keep.s,keep.s)}catch(_){}}}
+  let html,cta="";
+  if(ui.tab==="order"){
+    if(ui.sub==="review")html=viewReview();
+    else if(ui.sub==="vendor"){html=viewOrder();const n=draftLines(V(ui.vid)).length;if(n)cta='<div class="cta"><div class="in"><button class="btn" data-act="review"><span>'+t("itemsSel",{n})+'</span><span>'+t("reviewCta")+' →</span></button></div></div>'}
+    else html=viewHome();
+  }else if(ui.tab==="recv"){html=viewReceive();if(ui.rcv)cta='<div class="cta"><div class="in"><button class="btn" data-act="rcvsave"><span>'+t("saveRcv")+'</span><span>✓</span></button></div></div>'}
+  else if(ui.tab==="inv"||ui.tab==="price")html=viewSoon(ui.tab);
+  else html=ui.tab==="log"?viewLog():viewSettings();
+  $("#app").innerHTML=html;$("#ctaw").innerHTML=cta;document.body.classList.toggle("cta",!!cta);
+  if(keep){const e=document.querySelector('[data-act="'+keep.a+'"][data-id="'+keep.i+'"]');if(e&&e.focus&&e.type!=="checkbox"){e.focus();try{e.setSelectionRange(keep.s,keep.s)}catch(_){}}}
 }
 /* ---------- 이벤트 ---------- */
+const TYPED=["srch","cemail","ccode","qty","got","store","storeEn","vname","vnameEn","vphone","iname","ien","iunit","vsms","langsel","vcut","lead"];
 document.addEventListener("click",ev=>{
-  const t=ev.target.closest("[data-act]");if(!t)return;
-  const a=t.dataset.act,id=t.dataset.id;
-  if(["qty","got","store","vname","vphone","iname","iunit"].includes(a))return;
-  if(t.tagName==="A"&&t.getAttribute("href")==="#")ev.preventDefault();
+  const el=ev.target.closest("[data-act]");if(!el||!S)return;
+  const a=el.dataset.act,id=el.dataset.id;
+  if(TYPED.includes(a))return;
+  if(el.tagName==="A"&&el.getAttribute("href")==="#")ev.preventDefault();
   const v=S&&V(ui.vid);
   switch(a){
-    case"tab":ui.tab=id;ui.rcv=null;break;
+    case"tab":ui.tab=id;ui.rcv=null;ui.sub=null;window.scrollTo(0,0);break;
+    case"open":ui.vid=id;ui.sub="vendor";ui.filter="all";ui.q="";window.scrollTo(0,0);break;
+    case"home":ui.sub=ui.sub==="review"?"vendor":null;window.scrollTo(0,0);break;
+    case"review":ui.sub="review";window.scrollTo(0,0);break;
     case"vid":ui.vid=id;break;
+    case"lang":S.lang=id;persist();break;
+    case"flt":ui.filter=id;break;
+    case"tog":{const d=draftOf(v.id);d[id]=(+d[id]||0)>0?0:(lastQty(v.id,id)||1);break}
     case"inc":{const d=draftOf(v.id);d[id]=(+d[id]||0)+1;break}
     case"dec":{const d=draftOf(v.id);d[id]=Math.max(0,(+d[id]||0)-1);break}
     case"addmiss":{const d=draftOf(v.id);d[id]=lastQty(v.id,id)||1;break}
-    case"loadlast":{const o=vOrders(v.id)[0];if(!o){toast("지난 주문이 없습니다");return}const d=ui.draft[v.id]={};o.lines.forEach(l=>d[l.itemId]=l.qty);toast(md(o.date)+" 주문을 불러왔습니다 — 이번 수량으로 고치세요");break}
-    case"copy":{const b=$("#smsbox");try{navigator.clipboard.writeText(b.value).then(()=>toast("복사했습니다"),()=>{b.select();toast("직접 선택해 복사하세요")})}catch(e){b.select();toast("직접 선택해 복사하세요")}return}
-    case"sent":{const d=draftOf(v.id);const lines=v.items.map(i=>({itemId:i.id,qty:+d[i.id]||0})).filter(l=>l.qty>0);
-      S.orders.push({id:uid(),vendorId:v.id,date:today(),status:"sent",lines,received:null,shorts:[]});ui.draft[v.id]={};persist();toast("입고 대기로 저장했습니다");break}
-    case"rcvopen":{const o=S.orders.find(x=>x.id===id);const got={};o.lines.forEach(l=>got[l.itemId]=l.qty);ui.rcv={id,got};break}
+    case"loadlast":{const o=vOrders(v.id)[0];if(!o){toast(t("noLast"));return}const d=S.drafts[v.id]={};o.lines.forEach(l=>d[l.itemId]=l.qty);persist();toast(t("loaded",{d:md(o.date)}));break}
+    case"want":{S.interest=S.interest||{};S.interest[id]=S.interest[id]?0:Date.now();persist();if(S.interest[id])toast(t("wantOn"));break}
+    case"dow":{const n=+id;v.days=v.days||[];const k=v.days.indexOf(n);if(k>=0)v.days.splice(k,1);else v.days.push(n);v.days.sort();persist();break}
+    case"ics":{const txt=buildIcs();if(!txt){toast(t("icsNone"));return}
+      try{const b=new Blob([txt],{type:"text/calendar"}),u=URL.createObjectURL(b),a2=document.createElement("a");a2.href=u;a2.download="order-guard.ics";document.body.appendChild(a2);a2.click();setTimeout(()=>{a2.remove();URL.revokeObjectURL(u)},3000);toast(t("icsDone"))}catch(e){toast(t("icsNone"))}
+      window._ics=txt;return}
+    case"copy":{const b=$("#smsbox");try{navigator.clipboard.writeText(b.value).then(()=>toast(t("copied")),()=>{b.select();toast(t("selManual"))})}catch(e){b.select();toast(t("selManual"))}return}
+    case"sent":{const d=draftOf(v.id),lines=v.items.map(i=>({itemId:i.id,qty:+d[i.id]||0})).filter(l=>l.qty>0);if(!lines.length){toast(t("noOrderYet"));return}
+      S.orders.push({id:uid(),vendorId:v.id,date:today(),status:"sent",lines,received:null,shorts:[]});S.drafts[v.id]={};ui.sub=null;persist();toast(t("savedWait"));break}
+    case"rcvopen":{const o=S.orders.find(x=>x.id===id),got={};o.lines.forEach(l=>got[l.itemId]=l.qty);ui.rcv={id,got};break}
     case"rcvback":ui.rcv=null;break;
-    case"rcvsave":{const o=S.orders.find(x=>x.id===ui.rcv.id);const vv=V(o.vendorId);
+    case"gotchk":{const o=S.orders.find(x=>x.id===ui.rcv.id),l=o.lines.find(x=>x.itemId===id);ui.rcv.got[id]=(+ui.rcv.got[id]||0)>=l.qty?0:l.qty;break}
+    case"rcvsave":{const o=S.orders.find(x=>x.id===ui.rcv.id),vv=V(o.vendorId);
       o.received=ui.rcv.got;o.status="received";o.shorts=o.lines.filter(l=>(+ui.rcv.got[l.itemId]||0)<l.qty).map(l=>({itemId:l.itemId,name:itemOf(vv,l.itemId).name,short:l.qty-(+ui.rcv.got[l.itemId]||0)}));
-      ui.rcv=null;persist();toast(o.shorts.length?"부족 "+o.shorts.length+"건 기록":"이상 없음으로 저장");break}
-    case"runadd":{const item=$("#rn_item").value.trim();if(!item){toast("품목을 입력하세요");return}
-      S.runs.push({id:uid(),date:today(),item,why:$("#rn_why").value,amount:+$("#rn_amt").value||0});persist();toast("기록했습니다");break}
+      ui.rcv=null;persist();toast(o.shorts.length?t("shortSaved",{n:o.shorts.length}):t("allGoodSaved"));break}
+    case"runadd":{const item=$("#rn_item").value.trim();if(!item){toast(t("needItem"));return}
+      S.runs.push({id:uid(),date:today(),item,why:$("#rn_why").value,amount:+$("#rn_amt").value||0});persist();toast(t("recorded"));break}
     case"rundel":S.runs=S.runs.filter(r=>r.id!==id);persist();break;
-    case"addvendor":{const n={id:"v"+uid(),name:"새 거래처",phone:"",items:[]};S.vendors.push(n);ui.vid=n.id;persist();break}
-    case"vdel":if(S.vendors.length<2){toast("거래처는 1곳 이상 있어야 합니다");return}if(!confirmTwice(t))return;S.vendors=S.vendors.filter(x=>x.id!==v.id);S.orders=S.orders.filter(o=>o.vendorId!==v.id);ui.vid=S.vendors[0].id;persist();break;
-    case"iadd":{const n=$("#newitem").value.trim();if(!n)return;v.items.push({id:"i"+uid(),name:n,unit:"개",price:null});persist();break}
-    case"idel":if(!confirmTwice(t))return;v.items=v.items.filter(i=>i.id!==id);persist();break;
-    case"bkout":$("#bk").value=JSON.stringify(S);toast("아래 칸의 내용을 복사해 보관하세요");return;
-    case"bkin":{try{const o=JSON.parse($("#bk").value);if(!o.vendors||!o.orders)throw 0;S=o;persist();toast("가져왔습니다")}catch(e){toast("형식이 맞지 않습니다");return}break}
-    case"reset":if(!confirmTwice(t))return;S=seed();ui.draft={};ui.vid=S.vendors[0].id;persist();break;
+    case"addvendor":{const n={id:"v"+uid(),name:t("newVendor"),en:"",phone:"",smsLang:"ko",items:[]};S.vendors.push(n);ui.vid=n.id;persist();break}
+    case"vdel":if(S.vendors.length<2){toast(t("needOne"));return}if(!armTwice(el))return;S.vendors=S.vendors.filter(x=>x.id!==v.id);S.orders=S.orders.filter(o=>o.vendorId!==v.id);ui.vid=S.vendors[0].id;persist();break;
+    case"iadd":{const n=$("#newitem").value.trim();if(!n)return;v.items.push({id:"i"+uid(),name:n,en:"",unit:"개",price:null});persist();break}
+    case"idel":if(!armTwice(el))return;v.items=v.items.filter(i=>i.id!==id);persist();break;
+    case"bkout":$("#bk").value=JSON.stringify(S);toast(t("exportDone"));return;
+    case"bkin":{try{const o=JSON.parse($("#bk").value);if(!o.vendors||!o.orders)throw 0;S=migrate(o);persist();toast(t("imported"))}catch(e){toast(t("badFormat"));return}break}
+    case"csend":cloudSend();return;
+    case"cverify":cloudVerify();return;
+    case"cback":cl.st="out";cl.msg="";break;
+    case"cnow":cloudPush();toast(t("cloudBacking"));return;
+    case"crestore":if(!armTwice(el))return;cloudRestore();return;
+    case"cout":saveSess(null);cl.st="out";cl.last=null;cl.err="";cl.msg="";break;
+    case"reset":if(!armTwice(el))return;{const l=S.lang;S=seed();S.lang=l;ui.vid=S.vendors[0].id;persist()}break;
   }
+  if(["tog","inc","dec","addmiss"].includes(a))persist();
   render();
 });
 let armed=null;
-function confirmTwice(btn){ // iframe에서는 confirm()이 막혀 있어 두 번 눌러 확인
-  if(armed===btn.dataset.act+btn.dataset.id){armed=null;return true}
-  armed=btn.dataset.act+btn.dataset.id;toast("한 번 더 누르면 삭제됩니다");setTimeout(()=>{armed=null},3000);return false;
+function armTwice(btn){ // iframe·PWA에서 confirm()이 막힐 수 있어 두 번 눌러 확인
+  const k=btn.dataset.act+(btn.dataset.id||"");
+  if(armed===k){armed=null;return true}
+  armed=k;toast(t("tapAgain"));setTimeout(()=>{armed=null},3000);return false;
 }
 document.addEventListener("input",ev=>{
-  const t=ev.target;const a=t.dataset&&t.dataset.act;if(!a)return;const id=t.dataset.id;const v=V(ui.vid);
-  if(a==="qty"){draftOf(v.id)[id]=t.value===""?0:+t.value;clearTimeout(window._rt);window._rt=setTimeout(render,500)}
-  else if(a==="got"){ui.rcv.got[id]=t.value===""?0:+t.value;clearTimeout(window._rt);window._rt=setTimeout(render,500)}
-  else if(a==="store"){S.store=t.value;persist()}
-  else if(a==="vname"){v.name=t.value;persist()}
-  else if(a==="vphone"){v.phone=t.value.replace(/[^\d+]/g,"");persist()}
-  else if(a==="iname"){itemOf(v,id).name=t.value;persist()}
-  else if(a==="iunit"){itemOf(v,id).unit=t.value;persist()}
+  const el=ev.target,a=el.dataset&&el.dataset.act;if(!a||!TYPED.includes(a))return;const id=el.dataset.id,v=S&&V(ui.vid);
+  const later=()=>{clearTimeout(window._rt);window._rt=setTimeout(render,500)};
+  if(a==="srch"){ui.q=el.value;later()}
+  else if(a==="qty"){draftOf(v.id)[id]=el.value===""?0:+el.value;persist();later()}
+  else if(a==="got"){ui.rcv.got[id]=el.value===""?0:+el.value;later()}
+  else if(a==="cemail"){cl.email=el.value}
+  else if(a==="ccode"){cl.code=el.value}
+  else if(a==="langsel"){S.lang=el.value;persist();render()}
+  else if(a==="vsms"){v.smsLang=el.value;persist()}
+  else if(a==="vcut"){v.cutoff=el.value||"09:00";persist()}
+  else if(a==="lead"){S.lead=+el.value;persist()}
+  else if(a==="store"){S.store=el.value;persist()}
+  else if(a==="storeEn"){S.storeEn=el.value;persist()}
+  else if(a==="vname"){v.name=el.value;persist()}
+  else if(a==="vnameEn"){v.en=el.value;persist()}
+  else if(a==="vphone"){v.phone=el.value.replace(/[^\d+]/g,"");persist()}
+  else if(a==="iname"){itemOf(v,id).name=el.value;persist()}
+  else if(a==="ien"){itemOf(v,id).en=el.value;persist()}
+  else if(a==="iunit"){itemOf(v,id).unit=el.value;persist()}
 });
 init();
-if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})})}
+if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){window.addEventListener("load",()=>{const had=!!navigator.serviceWorker.controller;navigator.serviceWorker.addEventListener("controllerchange",()=>{if(had){const u=document.getElementById("upd");if(u)u.style.display="block"}});navigator.serviceWorker.register("sw.js").then(r=>{r.update();setInterval(()=>r.update(),3600000)}).catch(()=>{})})}
 </script>
 </body>
 </html>
